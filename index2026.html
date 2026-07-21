@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紀家烘焙坊 - 專屬宅配預購系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen py-10 px-4">
+
+    <div class="max-w-2xl mx-auto space-y-6">
+        
+        <!-- 頁首標題 -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl font-black text-amber-700">📦 紀家烘焙坊</h1>
+            <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統（自訂數量版）</p>
+        </div>
+
+        <!-- 區塊一：填寫訂單區 -->
+        <div id="formContainer" class="space-y-6">
+            
+            <!-- 🏪 自取客人分流公告 -->
+            <div class="bg-amber-100 border-l-4 border-amber-600 rounded-r-2xl p-4 shadow-sm text-sm text-amber-950 space-y-2">
+                <p class="font-bold flex items-center gap-1.5 text-base">🏪 店內自取客人請注意：</p>
+                <p>本系統僅提供「**宅配寄送**」填單。若您需要到店自取，請勿在此填寫，請點擊下方連結前往專屬網頁訂購：</p>
+                <a href="https://jijiaordersys.blogspot.com/p/blog-page.html?openExternalBrowser=1" target="_blank" class="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-xs shadow-sm mt-1 cursor-pointer">
+                    👉 點此前往【自取專用訂購網頁】
+                </a>
+            </div>
+
+            <!-- 🚚 免運分流公告 -->
+            <div id="freeShippingNotice" class="hidden bg-emerald-100 border-l-4 border-emerald-600 rounded-r-2xl p-4 shadow-sm text-sm text-emerald-950 space-y-2">
+                <p class="font-bold flex items-center gap-1.5 text-base">🎉 恭喜！您選擇的區間享有免運優惠：</p>
+                <p>您所選擇的配送日期 (**8/3 ~ 8/17**) 期間享有**免運特別優惠**！為了確保您的免運權益，請移駕至下方免運專屬網頁進行下單：</p>
+                <a href="https://qoo40423-ops.github.io/still_ji2025/" target="_blank" class="inline-block bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-xs shadow-sm mt-1 cursor-pointer">
+                    👉 點此前往【8/3 ~ 8/17 免運專屬訂購網頁】
+                </a>
+            </div>
+
+            <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100">
+                <h2 class="text-xl font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">✨ 新增宅配訂單</h2>
+                
+                <form id="orderForm" class="space-y-5">
+                    <!-- 出貨配送日期 -->
+                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 tracking-wider">📅 配送時間</h3>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">希望出貨日 *</label>
+                            <select id="shipDate" required onchange="handleDateChange()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="">-- 請選擇指定出貨日 --</option>
+                                <option value="2026/08/03">2026/08/03 (一) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/04">2026/08/04 (二) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/05">2026/08/05 (三) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/06">2026/08/06 (四) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/07">2026/08/07 (五) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/10">2026/08/10 (一) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/11">2026/08/11 (二) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/12">2026/08/12 (三) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/13">2026/08/13 (四) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/14">2026/08/14 (五) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/17">2026/08/17 (一) 【🔥 期間免運請看上方提示】</option>
+                                <option value="2026/08/18">2026/08/18 (二)</option>
+                                <option value="2026/08/19">2026/08/19 (三)</option>
+                                <option value="2026/08/20">2026/08/20 (四)</option>
+                                <option value="2026/08/21">2026/08/21 (五)</option>
+                                <option value="2026/08/24">2026/08/24 (一)</option>
+                                <option value="2026/08/25">2026/08/25 (二) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/08/26">2026/08/26 (三) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/08/27">2026/08/27 (四) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/08/28">2026/08/28 (五) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/08/31">2026/08/31 (一) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/01">2026/09/01 (二) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/02">2026/09/02 (三) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/03">2026/09/03 (四) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/04">2026/09/04 (五) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/07">2026/09/07 (一) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/08">2026/09/08 (二) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/09">2026/09/09 (三) 【中秋高峰-不開放6入】</option>
+                                <option value="2026/09/10">2026/09/10 (四) 【中秋高峰-不開放6入】</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 訂購人與收件人基本資料 -->
+                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+                        <h3 class="text-xs font-bold text-slate-400 tracking-wider">👤 基本資料</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">訂購人姓名 *</label>
+                                <input type="text" id="orderName" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">電子郵件地址 *</label>
+                                <input type="email" id="buyerEmail" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">收件人姓名 *</label>
+                                <input type="text" id="receiveName" required class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">收件人手機/電話 *</label>
+                                <input type="tel" id="receivePhone" required placeholder="如：0912345678" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">收件人地址 *</label>
+                            <input type="text" id="receiveAddress" oninput="calculateTotal()" required placeholder="請填寫完整配送地址" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+
+                    <!-- 方案選擇區塊 -->
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-slate-700">🛒 訂購數量與即時庫存</label>
+                        
+                        <!-- 6入品項 -->
+                        <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                            <img src="https://placehold.co/120x120/f59e0b/ffffff?text=6+Boxes" alt="6入精緻裝" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <div class="flex-1 space-y-1">
+                                <h4 class="font-bold text-slate-800">🎁 6入精緻裝 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
+                                <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
+                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
+                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 08/25 起之中秋高峰期，此規格不開放宅配。</p>
+                            </div>
+                            <div class="flex items-center space-x-2 justify-end">
+                                <input type="number" id="box6" min="0" step="15" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">盒</span>
+                            </div>
+                        </div>
+
+                        <!-- 15入品項 -->
+                        <div id="block_box15" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                            <img src="https://placehold.co/120x120/b45309/ffffff?text=15+Boxes" alt="15入伴手禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <div class="flex-1 space-y-1">
+                                <h4 class="font-bold text-slate-800">🧧 15入伴手禮盒 <span class="text-amber-700 ml-1">(NT$ 750 / 盒)</span></h4>
+                                <p class="text-xs text-slate-400">※ 最少需滿 4 盒以上才出貨</p>
+                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 換算大盒剩餘約：<span id="stock_box15_lbl">--</span> 盒</p>
+                            </div>
+                            <div class="flex items-center space-x-2 justify-end">
+                                <input type="number" id="box15" min="0" value="0" oninput="checkStock(); calculateTotal();" onblur="validateBox15Min();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">盒</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 發票與備註 -->
+                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">發票是否要開立統編 *</label>
+                            <select id="invoiceType" onchange="toggleTaxFields()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="否">不需要統編 (個人電子發票)</option>
+                                <option value="是">需要統編 (公司用電子發票)</option>
+                            </select>
+                        </div>
+                        <div id="taxFields" class="hidden">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">統一編號 *</label>
+                            <input type="text" id="invoiceTaxId" placeholder="請輸入8碼公司統編" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">備註</label>
+                            <textarea id="comment" rows="2" placeholder="有特殊需求請在此註記" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 💰 費用試算看板 -->
+                    <div class="bg-amber-50/60 border border-amber-200 rounded-2xl p-5 space-y-3">
+                        <h3 class="text-xs font-bold text-amber-800 tracking-wider">💰 費用即時試算</h3>
+                        <div class="text-xs text-slate-600 space-y-1.5 border-b border-amber-200/60 pb-3">
+                            <div class="flex justify-between"><span>商品小計：</span><span class="font-medium text-slate-800">NT$ <span id="lblProductTotal">0</span></span></div>
+                            <div class="flex justify-between"><span>基礎宅配運費：</span><span class="font-medium text-slate-800">NT$ <span id="lblBaseShipping">0</span></span></div>
+                            <div id="rowEastAddition" class="hidden flex justify-between text-orange-700 font-medium">
+                                <span>⚠️ 東部外島加成 (宜花東每箱+10)：</span>
+                                <span>NT$ +<span id="lblEastShipping">0</span></span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-1">
+                            <span class="text-sm font-bold text-amber-900">預估應付總金額：</span>
+                            <span class="text-2xl font-black text-amber-700">NT$ <span id="lblFinalTotal">0</span></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md cursor-pointer text-center block">
+                        確認送出預購訂單
+                    </button>
+                </form>
+            </div>
+
+            <!-- 🔍 訂單查詢與修改區塊 -->
+            <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
+                <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
+                <p class="text-xs text-slate-500">請輸入您下單時填寫的「電子郵件地址」，系統將自動撈取您以此信箱建立的**所有歷史訂單**紀錄。</p>
+                <form id="searchForm" class="space-y-3">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="email" id="searchEmail" required placeholder="請輸入電子郵件" class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <button type="submit" id="searchBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-bold py-2 px-5 rounded-lg transition duration-150 cursor-pointer">
+                            查詢所有訂單
+                        </button>
+                    </div>
+                </form>
+                <!-- 查詢結果放置處 -->
+                <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+            </div>
+
+        </div>
+
+        <!-- 區塊二：真實匯款資訊大卡片 -->
+        <div id="successBankCard" class="hidden bg-white shadow-md rounded-2xl p-6 border-2 border-emerald-500 space-y-5 text-center transition duration-300">
+            <div class="space-y-1">
+                <div class="text-4xl">🎉</div>
+                <h2 class="text-xl font-black text-emerald-700">訂單已成功送出！</h2>
+                <p class="text-xs text-slate-500">系統已同步將資料寫入雲端檔案，請於三日內完成匯款。</p>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left max-w-md mx-auto space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200/60 pb-2">
+                    <span class="text-sm font-bold text-slate-600">💰 應匯款總金額：</span>
+                    <span class="text-xl font-black text-amber-700">NT$ <span id="cardFinalTotal">0</span></span>
+                </div>
+                <div class="text-sm space-y-2 text-slate-700">
+                    <div><strong>🏦 銀行名稱：</strong> 彰化五信 (總行代號：161)</div>
+                    <div><strong>🏪 分行名稱：</strong> 華山分社</div>
+                    <div class="flex justify-between items-center bg-white p-2 border border-slate-200 rounded-lg">
+                        <div><strong>🔢 匯款帳號：</strong> <span id="bankAccount" class="font-mono font-bold text-slate-900 select-all">00022111088890</span></div>
+                        <button onclick="copyBankAccount()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded border border-slate-300 transition duration-100 cursor-pointer">📋 複製帳號</button>
+                    </div>
+                    <div><strong>👤 戶名：</strong> 紀家烘焙坊-吳亭緯</div>
+                </div>
+            </div>
+
+            <div class="text-xs text-amber-800 bg-amber-50 border border-amber-200/60 rounded-xl p-4 max-w-md mx-auto text-left space-y-3">
+                <div>
+                    <p class="font-bold text-amber-900 text-sm">📢 匯款完成後，請務必通知我們！</p>
+                    <p class="mt-1">轉帳成功後，請前往我們的 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-600 font-bold underline hover:text-emerald-700">官方帳號</a> 告知，或搜尋 LINE ID 加好友，並提供您的 <span class="bg-amber-200 px-1 font-bold text-amber-900 rounded">帳戶後 5 碼</span> 以利對帳。</p>
+                    <p class="mt-1 text-slate-600 font-medium">💬 LINE ID：<span class="bg-white px-2 py-0.5 border border-slate-200 rounded font-mono text-slate-900 select-all">still_ji</span></p>
+                </div>
+                <a href="https://lin.ee/XouvMRx" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-2.5 px-4 rounded-lg transition duration-150 text-sm shadow-sm mt-2 cursor-pointer">
+                    💬 點我加 LINE 通知五碼
+                </a>
+            </div>
+
+            <!-- 新增：返回繼續寫下一份訂單按鈕 -->
+            <div class="max-w-md mx-auto pt-2">
+                <button onclick="resetAndWriteAnotherOrder()" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm cursor-pointer text-center block text-sm">
+                    🔄 返回繼續寫下一份訂單
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxkIAuoke3cFD9Rp3KPaRZdIf7CqjJhI7Hy1VxLLiV3orF83XgoVj40fAd_XdHefbGRjg/exec";
+
+        let currentCalculatedTotal = 0;
+        let remainingTotalPieces = 4200; 
+
+        window.onload = function() {
+            document.getElementById('stock_pieces_lbl').innerText = "--";
+            document.getElementById('stock_box15_lbl').innerText = "--";
+            calculateTotal();
+        };
+
+        function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
+            const box15Input = document.getElementById('box15');
+            const box6Input = document.getElementById('box6');
+            const submitBtn = document.getElementById('submitBtn');
+            const blockBox15 = document.getElementById('block_box15');
+            const blockBox6 = document.getElementById('block_box6');
+
+            if (isDisabled) {
+                box6Input.disabled = true;
+                box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                blockBox6.classList.add('bg-gray-100', 'opacity-60');
+
+                box15Input.disabled = true;
+                box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                blockBox15.classList.add('bg-gray-100', 'opacity-60');
+
+                submitBtn.disabled = true;
+                submitBtn.innerText = message;
+                submitBtn.className = "w-full bg-slate-300 text-slate-500 font-bold py-3 px-4 rounded-xl cursor-not-allowed text-center block";
+            } else {
+                box15Input.disabled = false;
+                box15Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                blockBox15.classList.remove('bg-gray-100', 'opacity-60');
+
+                submitBtn.disabled = false;
+                submitBtn.innerText = "確認送出預購訂單";
+                submitBtn.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md cursor-pointer text-center block";
+            }
+        }
+
+        function handleDateChange() {
+            const shipDate = document.getElementById('shipDate').value;
+            const box6Input = document.getElementById('box6');
+            const box15Input = document.getElementById('box15');
+            const peakNotice = document.getElementById('peakNotice');
+            const blockBox6 = document.getElementById('block_box6');
+            const freeShippingNotice = document.getElementById('freeShippingNotice');
+            const submitBtn = document.getElementById('submitBtn');
+
+            box6Input.value = 0;
+            box15Input.value = 0;
+            calculateTotal();
+
+            if (!shipDate) {
+                document.getElementById('stock_pieces_lbl').innerText = "--";
+                document.getElementById('stock_box15_lbl').innerText = "--";
+                setFormDisabled(false);
+                return;
+            }
+
+            // 檢查免運區間 (8/3 ~ 8/17) -> 隱藏庫存並將下方表單灰化鎖定
+            if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
+                freeShippingNotice.classList.remove('hidden');
+                document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
+                document.getElementById('stock_box15_lbl').innerText = "免運專屬";
+                setFormDisabled(true, "❌ 請至上方免運網頁訂購");
+                alert("📢 溫馨提醒：您選的日期【享有免運優惠】，請使用上方綠色區塊的連結前往專屬網頁訂購！");
+                return;
+            } else {
+                freeShippingNotice.classList.add('hidden');
+                setFormDisabled(false);
+            }
+
+            // 💡 8/25 (含) 以後鎖定 6 入宅配（8/24 依然可以選）
+            if (shipDate >= '2026/08/25') {
+                box6Input.disabled = true;
+                box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                peakNotice.classList.remove('hidden');
+                blockBox6.classList.add('bg-gray-100', 'opacity-60');
+            } else {
+                box6Input.disabled = false;
+                box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                peakNotice.classList.add('hidden');
+                blockBox6.classList.remove('bg-gray-100', 'opacity-60');
+            }
+
+            document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
+            document.getElementById('stock_box15_lbl').innerText = "讀取中...";
+
+            // 向後端請求庫存
+            fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
+            .then(res => res.json())
+            .then(data => {
+                let pieces = 0;
+                if (data !== null && data !== undefined) {
+                    if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
+                    else if (typeof data.remainingTotalPieces !== 'undefined') pieces = parseInt(data.remainingTotalPieces);
+                    else if (typeof data.stock !== 'undefined') pieces = parseInt(data.stock);
+                    else if (typeof data.pieces !== 'undefined') pieces = parseInt(data.pieces);
+                    else if (typeof data.totalPieces !== 'undefined') pieces = parseInt(data.totalPieces);
+                    else if (typeof data.box15 !== 'undefined') pieces = parseInt(data.box15) * 15;
+                    else if (data.data && typeof data.data.remainingPieces !== 'undefined') pieces = parseInt(data.data.remainingPieces);
+                    else if (data.order && typeof data.order.remainingPieces !== 'undefined') pieces = parseInt(data.order.remainingPieces);
+                    else if (!isNaN(data)) {
+                        pieces = parseInt(data);
+                    } else {
+                        const keys = Object.keys(data);
+                        for (let key of keys) {
+                            if (!isNaN(data[key]) && typeof data[key] === 'number') {
+                                pieces = data[key];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
+                
+                document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
+                document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
+
+                if (remainingTotalPieces <= 0) {
+                    setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
+                } else {
+                    setFormDisabled(false);
+                    if (shipDate >= '2026/08/25') {
+                        box6Input.disabled = true;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error("【庫存 API 連線錯誤】", err);
+                document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
+                document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
+            });
+        }
+
+        function checkStock() {
+            const box6Val = parseInt(document.getElementById('box6').value) || 0;
+            const box15Val = parseInt(document.getElementById('box15').value) || 0;
+            
+            const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
+
+            if (totalSelectedPieces > remainingTotalPieces) {
+                alert(`⚠️ 您選購的總顆數 (${totalSelectedPieces} 顆) 已超過該日期的剩餘可接單總量 (${remainingTotalPieces} 顆)！`);
+                document.getElementById('box6').value = 0;
+                document.getElementById('box15').value = 0;
+                calculateTotal();
+            }
+        }
+
+        function validateBox6Multiplier() {
+            const box6Input = document.getElementById('box6');
+            let val = parseInt(box6Input.value) || 0;
+            if (val > 0 && val % 15 !== 0) {
+                alert("💡 6入規格需以 15 盒為單位（滿箱）才出貨唷！");
+                box6Input.value = Math.ceil(val / 15) * 15;
+            }
+            checkStock();
+            calculateTotal();
+        }
+
+        function validateBox15Min() {
+            const box15Input = document.getElementById('box15');
+            let val = parseInt(box15Input.value) || 0;
+            if (val > 0 && val < 4) {
+                alert("❌ 15入伴手禮盒最少需滿 4 盒以上才出貨，已自動為您更正為 4 盒。");
+                box15Input.value = 4;
+                calculateTotal();
+            }
+        }
+
+        function toggleTaxFields() {
+            const invoiceType = document.getElementById('invoiceType').value;
+            document.getElementById('taxFields').classList.toggle('hidden', invoiceType !== '是');
+            document.getElementById('invoiceTaxId').required = (invoiceType === '是');
+        }
+
+        function calculateTotal() {
+            const box6 = parseInt(document.getElementById('box6').value) || 0;
+            const box15 = parseInt(document.getElementById('box15').value) || 0;
+            const address = document.getElementById('receiveAddress').value;
+            const shipDate = document.getElementById('shipDate').value;
+
+            const productTotal = (box6 * 300) + (box15 * 750);
+            const isFreeShipping = (shipDate >= '2026/08/03' && shipDate <= '2026/08/17');
+
+            let baseShippingFee = 0;
+            let eastShippingFee = 0;
+
+            if (!isFreeShipping) {
+                const ship6 = (box6 / 15) * 170;
+                const ship15 = box15 >= 4 ? Math.ceil(box15 / 10) * 210 : 0;
+                baseShippingFee = ship6 + ship15;
+
+                if (address && (address.includes('宜蘭') || address.includes('花蓮') || address.includes('台東') || address.includes('臺東'))) {
+                    const box6Boxes = box6 / 15;
+                    const box15Boxes = box15 >= 4 ? Math.ceil(box15 / 10) : 0;
+                    eastShippingFee = (box6Boxes + box15Boxes) * 10;
+                }
+            }
+
+            if (eastShippingFee > 0) {
+                document.getElementById('rowEastAddition').classList.remove('hidden');
+            } else {
+                document.getElementById('rowEastAddition').classList.add('hidden');
+            }
+
+            currentCalculatedTotal = productTotal + baseShippingFee + eastShippingFee;
+            
+            document.getElementById('lblProductTotal').innerText = productTotal.toLocaleString();
+            document.getElementById('lblBaseShipping').innerText = baseShippingFee.toLocaleString();
+            document.getElementById('lblEastShipping').innerText = eastShippingFee.toLocaleString();
+            document.getElementById('lblFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const box6 = parseInt(document.getElementById('box6').value) || 0;
+            const box15 = parseInt(document.getElementById('box15').value) || 0;
+
+            if (box6 === 0 && box15 === 0) { alert("❌ 請至少輸入一種商品的訂購數量！"); return; }
+            if (box15 > 0 && box15 < 4) { alert("❌ 15入規格至少需滿 4 盒以上才出貨唷！"); return; }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "⏳ 訂單傳送中，請勿關閉網頁...";
+
+            const formData = {
+                action: "submitOrder",
+                buyerEmail: document.getElementById('buyerEmail').value,
+                receiveName: document.getElementById('receiveName').value,
+                receivePhone: document.getElementById('receivePhone').value,
+                receiveAddress: document.getElementById('receiveAddress').value,
+                box6: box6,
+                box15: box15,
+                shipDate: document.getElementById('shipDate').value,
+                orderName: document.getElementById('orderName').value,
+                invoiceType: document.getElementById('invoiceType').value,
+                invoiceTaxId: document.getElementById('invoiceTaxId').value,
+                comment: document.getElementById('comment').value
+            };
+
+            fetch(GAS_WEB_APP_URL, {
+                method: "POST",
+                mode: "cors",
+                headers: { "Content-Type": "text/plain" }, 
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === "success") {
+                    document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+                    document.getElementById('formContainer').classList.add('hidden');
+                    document.getElementById('successBankCard').classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("❌ 滿單或後台判定錯誤：" + (data.message || "請聯絡客服。"));
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "確認送出預購訂單";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("❌ 連線失敗，請確認後台試算表或重新整理再試一次。");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "確認送出預購訂單";
+            });
+        });
+
+        // 查詢該 Email 的「所有」歷史訂單 (修改後)
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('searchEmail').value;
+            const searchBtn = document.getElementById('searchBtn');
+            const resultDiv = document.getElementById('searchResult');
+
+            searchBtn.disabled = true;
+            searchBtn.innerText = "🔍 查詢中...";
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = "<p class='text-slate-500 animate-pulse'>正在向雲端資料庫撈取歷史訂單中，請稍候...</p>";
+
+            fetch(`${GAS_WEB_APP_URL}?action=queryOrder&email=${encodeURIComponent(email)}`)
+            .then(res => res.json())
+            .then(data => {
+                searchBtn.disabled = false;
+                searchBtn.innerText = "查詢所有訂單";
+                
+                if(data.status === "success" && data.orders && data.orders.length > 0) {
+                    let ordersHtml = `<div class="space-y-3"><p class="text-emerald-700 font-bold">✨ 共找到 ${data.orders.length} 筆以此信箱訂購的紀錄：</p>`;
+                    
+                    data.orders.forEach((ord, index) => {
+                        ordersHtml += `
+                            <div class="p-3 bg-white border border-slate-200 rounded-lg space-y-1 text-xs text-slate-700 shadow-xs">
+                                <div class="font-bold text-amber-800 border-b border-slate-100 pb-1 flex justify-between">
+                                    <span># 訂單 ${index + 1} (${ord.sheetName})</span>
+                                    <span class="text-slate-400">下單時間：${ord.timestamp}</span>
+                                </div>
+                                <div><strong>希望出貨日：</strong> ${ord.shipDate}</div>
+                                <div><strong>訂購品項：</strong> 6入: ${ord.box6} 盒 / 15入: ${ord.box15} 盒</div>
+                                <div><strong>收件人姓名：</strong> ${ord.receiveName}</div>
+                                <div><strong>配送地址：</strong> ${ord.receiveAddress}</div>
+                            </div>
+                        `;
+                    });
+
+                    ordersHtml += `
+                        <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
+                            <p class="font-bold">⚠️ 注意事項：</p>
+                            <p>系統不提供自行取消或修改功能。如需更改訂單內容或辦理取消，請直接私訊 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-700 font-bold underline">官方 LINE 客服</a> 協助處理！</p>
+                        </div>
+                    </div>`;
+
+                    resultDiv.innerHTML = ordersHtml;
+                } else {
+                    resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查無此電子郵件的訂單歷史紀錄，請確認輸入是否有誤。</p>";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                searchBtn.disabled = false;
+                searchBtn.innerText = "查詢所有訂單";
+                resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查詢連線失敗，請稍後再試或直接聯絡 LINE 客服。</p>";
+            });
+        });
+
+        function copyBankAccount() {
+            navigator.clipboard.writeText("00022111088890").then(() => { 
+                alert("📋 彰化五信帳號 (00022111088890) 已複製！"); 
+            });
+        }
+        
+        function resetAndWriteAnotherOrder() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
