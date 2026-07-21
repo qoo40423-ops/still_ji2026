@@ -41,7 +41,7 @@
                 <h2 class="text-xl font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">✨ 新增宅配訂單</h2>
                 
                 <form id="orderForm" class="space-y-5">
-                    <!-- 出貨配送日期與指定時間 -->
+                    <!-- 出貨配送日期與指定時間 (日期選單永遠保持可選，讓客人可以切換其他日期) -->
                     <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
                         <h3 class="text-xs font-bold text-slate-400 tracking-wider">📅 配送時間設定</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -92,7 +92,7 @@
                     </div>
 
                     <!-- 訂購人與收件人基本資料 -->
-                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
+                    <div id="sectionBasicInfo" class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4 transition duration-200">
                         <h3 class="text-xs font-bold text-slate-400 tracking-wider">👤 基本資料</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -155,7 +155,7 @@
                     </div>
 
                     <!-- 發票與備註 -->
-                    <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-3">
+                    <div id="sectionInvoice" class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-3 transition duration-200">
                         <div>
                             <label class="block text-xs font-bold text-slate-600 mb-1">發票是否要開立統編 *</label>
                             <select id="invoiceType" onchange="toggleTaxFields()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -199,7 +199,7 @@
             <!-- 🔍 訂單查詢與修改區塊 -->
             <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
                 <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
-                <p class="text-xs text-slate-500">請輸入您下單時填寫的「電子郵件地址」，系統將自動撈取您以此信箱建立的**所有歷史訂單**紀錄。</p>
+                <p class="text-xs text-slate-500">請輸入您下單時填寫的環節信箱，系統將自動撈取以此信箱建立的**所有歷史訂單**紀錄。</p>
                 <form id="searchForm" class="space-y-3">
                     <div class="flex flex-col sm:flex-row gap-3">
                         <input type="email" id="searchEmail" required placeholder="請輸入電子郵件" class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -208,7 +208,6 @@
                         </button>
                     </div>
                 </form>
-                <!-- 查詢結果放置處 -->
                 <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
             </div>
 
@@ -249,7 +248,6 @@
                 </a>
             </div>
 
-            <!-- 新增：返回繼續寫下一份訂單按鈕 -->
             <div class="max-w-md mx-auto pt-2">
                 <button onclick="resetAndWriteAnotherOrder()" class="w-full bg-slate-600 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm cursor-pointer text-center block text-sm">
                     🔄 返回繼續寫下一份訂單
@@ -271,14 +269,29 @@
             calculateTotal();
         };
 
+        // 💡 擴大鎖定範圍：當免運或滿單時，基本資料、數量框、發票備註全部鎖定灰化
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
-            const box15Input = document.getElementById('box15');
             const box6Input = document.getElementById('box6');
+            const box15Input = document.getElementById('box15');
             const submitBtn = document.getElementById('submitBtn');
-            const blockBox15 = document.getElementById('block_box15');
             const blockBox6 = document.getElementById('block_box6');
+            const blockBox15 = document.getElementById('block_box15');
+            
+            const sectionBasicInfo = document.getElementById('sectionBasicInfo');
+            const sectionInvoice = document.getElementById('sectionInvoice');
+            
+            const basicInputs = sectionBasicInfo.querySelectorAll('input, select, textarea');
+            const invoiceInputs = sectionInvoice.querySelectorAll('input, select, textarea');
 
             if (isDisabled) {
+                // 鎖定基本資料
+                basicInputs.forEach(el => {
+                    el.disabled = true;
+                    el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
+
+                // 鎖定數量框
                 box6Input.disabled = true;
                 box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox6.classList.add('bg-gray-100', 'opacity-60');
@@ -287,14 +300,38 @@
                 box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.add('bg-gray-100', 'opacity-60');
 
+                // 鎖定發票備註
+                invoiceInputs.forEach(el => {
+                    el.disabled = true;
+                    el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                sectionInvoice.classList.add('bg-gray-100', 'opacity-60');
+
+                // 鎖定按鈕
                 submitBtn.disabled = true;
                 submitBtn.innerText = message;
                 submitBtn.className = "w-full bg-slate-300 text-slate-500 font-bold py-3 px-4 rounded-xl cursor-not-allowed text-center block";
             } else {
+                // 解除鎖定基本資料
+                basicInputs.forEach(el => {
+                    el.disabled = false;
+                    el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                sectionBasicInfo.classList.remove('bg-gray-100', 'opacity-60');
+
+                // 解除數量框
                 box15Input.disabled = false;
                 box15Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.remove('bg-gray-100', 'opacity-60');
 
+                // 解除發票備註
+                invoiceInputs.forEach(el => {
+                    el.disabled = false;
+                    el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                sectionInvoice.classList.remove('bg-gray-100', 'opacity-60');
+
+                // 解除按鈕
                 submitBtn.disabled = false;
                 submitBtn.innerText = "確認送出預購訂單";
                 submitBtn.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md cursor-pointer text-center block";
@@ -308,7 +345,6 @@
             const peakNotice = document.getElementById('peakNotice');
             const blockBox6 = document.getElementById('block_box6');
             const freeShippingNotice = document.getElementById('freeShippingNotice');
-            const submitBtn = document.getElementById('submitBtn');
 
             box6Input.value = 0;
             box15Input.value = 0;
@@ -321,7 +357,7 @@
                 return;
             }
 
-            // 檢查免運區間 (8/3 ~ 8/17) -> 隱藏庫存並將下方表單灰化鎖定
+            // 檢查免運區間 (8/3 ~ 8/17) -> 全面灰化鎖定
             if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
                 freeShippingNotice.classList.remove('hidden');
                 document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
@@ -495,7 +531,7 @@
                 box6: box6,
                 box15: box15,
                 shipDate: document.getElementById('shipDate').value,
-                deliveryTimeSlot: document.getElementById('deliveryTimeSlot').value, // 新增指定到貨時段
+                deliveryTimeSlot: document.getElementById('deliveryTimeSlot').value,
                 orderName: document.getElementById('orderName').value,
                 invoiceType: document.getElementById('invoiceType').value,
                 invoiceTaxId: document.getElementById('invoiceTaxId').value,
@@ -529,7 +565,6 @@
             });
         });
 
-        // 查詢該 Email 的「所有」歷史訂單 (修改後)
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('searchEmail').value;
