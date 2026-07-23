@@ -41,7 +41,7 @@
                 <h2 class="text-xl font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">✨ 新增宅配訂單</h2>
                 
                 <form id="orderForm" class="space-y-5">
-                    <!-- 出貨配送日期與指定時間 (日期選單永遠保持可選，讓客人可以切換其他日期) -->
+                    <!-- 出貨配送日期與指定時間 -->
                     <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
                         <h3 class="text-xs font-bold text-slate-400 tracking-wider">📅 配送時間設定</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -269,7 +269,6 @@
             calculateTotal();
         };
 
-        // 💡 擴大鎖定範圍：當免運或滿單時，基本資料、數量框、發票備註全部鎖定灰化
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
             const box6Input = document.getElementById('box6');
             const box15Input = document.getElementById('box15');
@@ -284,14 +283,12 @@
             const invoiceInputs = sectionInvoice.querySelectorAll('input, select, textarea');
 
             if (isDisabled) {
-                // 鎖定基本資料
                 basicInputs.forEach(el => {
                     el.disabled = true;
                     el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定數量框
                 box6Input.disabled = true;
                 box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox6.classList.add('bg-gray-100', 'opacity-60');
@@ -300,38 +297,32 @@
                 box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定發票備註
                 invoiceInputs.forEach(el => {
                     el.disabled = true;
                     el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionInvoice.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定按鈕
                 submitBtn.disabled = true;
                 submitBtn.innerText = message;
                 submitBtn.className = "w-full bg-slate-300 text-slate-500 font-bold py-3 px-4 rounded-xl cursor-not-allowed text-center block";
             } else {
-                // 解除鎖定基本資料
                 basicInputs.forEach(el => {
                     el.disabled = false;
                     el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionBasicInfo.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除數量框
                 box15Input.disabled = false;
                 box15Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除發票備註
                 invoiceInputs.forEach(el => {
                     el.disabled = false;
                     el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionInvoice.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除按鈕
                 submitBtn.disabled = false;
                 submitBtn.innerText = "確認送出預購訂單";
                 submitBtn.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md cursor-pointer text-center block";
@@ -339,7 +330,8 @@
         }
 
         function handleDateChange() {
-            const shipDate = document.getElementById('shipDate').value;
+            const shipDateSelect = document.getElementById('shipDate');
+            const shipDate = shipDateSelect.value;
             const box6Input = document.getElementById('box6');
             const box15Input = document.getElementById('box15');
             const peakNotice = document.getElementById('peakNotice');
@@ -357,7 +349,6 @@
                 return;
             }
 
-            // 檢查免運區間 (8/3 ~ 8/17) -> 全面灰化鎖定
             if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
                 freeShippingNotice.classList.remove('hidden');
                 document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
@@ -373,7 +364,6 @@
             document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
             document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
-            // 向後端請求庫存
             fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
             .then(res => res.json())
             .then(data => {
@@ -405,12 +395,23 @@
                 document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
                 document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
 
-                // 檢查是否滿單，或是進入高峰期不開放6入
+                // ✨ 【核心修改點】如果判定該日期已經滿單（庫存 <= 0）
                 if (remainingTotalPieces <= 0) {
-                    setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
+                    alert(`❌ 抱歉，${shipDate} 該日期已額滿，已為您將此日期從選單中移除。`);
+                    
+                    // 1. 找到當前被選取的 option 並將它從下拉式選單中刪除
+                    const selectedOption = shipDateSelect.options[shipDateSelect.selectedIndex];
+                    if (selectedOption) {
+                        selectedOption.remove();
+                    }
+                    
+                    // 2. 將下拉選單歸零重設
+                    shipDateSelect.value = "";
+                    document.getElementById('stock_pieces_lbl').innerText = "--";
+                    document.getElementById('stock_box15_lbl').innerText = "--";
+                    setFormDisabled(false);
                 } else {
                     setFormDisabled(false);
-                    // 💡 8/25 (含) 以後鎖定 6 入宅配（8/24 依然可以選）
                     if (shipDate >= '2026/08/25') {
                         box6Input.disabled = true;
                         box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
