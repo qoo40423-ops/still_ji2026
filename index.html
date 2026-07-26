@@ -41,7 +41,7 @@
                 <h2 class="text-xl font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">✨ 新增宅配訂單</h2>
                 
                 <form id="orderForm" class="space-y-5">
-                    <!-- 出貨配送日期與指定時間 (日期選單永遠保持可選，讓客人可以切換其他日期) -->
+                    <!-- 出貨配送日期與指定時間 -->
                     <div class="bg-slate-50/50 p-4 rounded-xl border border-slate-100 space-y-4">
                         <h3 class="text-xs font-bold text-slate-400 tracking-wider">📅 配送時間設定</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -79,6 +79,8 @@
                                     <option value="2026/09/09">2026/09/09 (三) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/10">2026/09/10 (四) 【中秋高峰-不開放6入】</option>
                                 </select>
+                                <!-- 預設到貨日自動提示區塊 -->
+                                <p id="estimatedArrivalNotice" class="hidden text-xs text-amber-700 font-bold mt-1.5 bg-amber-50 px-2 py-1 rounded border border-amber-200/60"></p>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-600 mb-1">指定到貨時間段 *</label>
@@ -196,7 +198,7 @@
                 </form>
             </div>
 
-            <!-- 🔍 訂單查詢與修改區塊 -->
+            <!-- 🔍 訂單查詢與客服協助區塊 -->
             <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
                 <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
                 <p class="text-xs text-slate-500">請輸入您下單時填寫的環節信箱，系統將自動撈取以此信箱建立的**所有歷史訂單**紀錄。</p>
@@ -221,6 +223,7 @@
                 <p class="text-xs text-slate-500">系統已同步將資料寫入雲端檔案，請於三日內完成匯款。</p>
             </div>
 
+            <!-- 抽離出來的匯款帳號明細模板 -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left max-w-md mx-auto space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-200/60 pb-2">
                     <span class="text-sm font-bold text-slate-600">💰 應匯款總金額：</span>
@@ -230,8 +233,8 @@
                     <div><strong>🏦 銀行名稱：</strong> 彰化五信 (總行代號：161)</div>
                     <div><strong>🏪 分行名稱：</strong> 華山分社</div>
                     <div class="flex justify-between items-center bg-white p-2 border border-slate-200 rounded-lg">
-                        <div><strong>🔢 匯款帳號：</strong> <span id="bankAccount" class="font-mono font-bold text-slate-900 select-all">00022111088890</span></div>
-                        <button onclick="copyBankAccount()" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded border border-slate-300 transition duration-100 cursor-pointer">📋 複製帳號</button>
+                        <div><strong>🔢 匯款帳號：</strong> <span class="font-mono font-bold text-slate-900 select-all">00022111088890</span></div>
+                        <button onclick="copyAccountText('00022111088890')" class="text-xs font-bold bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded border border-slate-300 transition duration-100 cursor-pointer">📋 複製帳號</button>
                     </div>
                     <div><strong>👤 戶名：</strong> 紀家烘焙坊-吳亭緯</div>
                 </div>
@@ -269,7 +272,6 @@
             calculateTotal();
         };
 
-        // 💡 擴大鎖定範圍：當免運或滿單時，基本資料、數量框、發票備註全部鎖定灰化
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
             const box6Input = document.getElementById('box6');
             const box15Input = document.getElementById('box15');
@@ -284,14 +286,12 @@
             const invoiceInputs = sectionInvoice.querySelectorAll('input, select, textarea');
 
             if (isDisabled) {
-                // 鎖定基本資料
                 basicInputs.forEach(el => {
                     el.disabled = true;
                     el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定數量框
                 box6Input.disabled = true;
                 box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox6.classList.add('bg-gray-100', 'opacity-60');
@@ -300,44 +300,39 @@
                 box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定發票備註
                 invoiceInputs.forEach(el => {
                     el.disabled = true;
                     el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionInvoice.classList.add('bg-gray-100', 'opacity-60');
 
-                // 鎖定按鈕
                 submitBtn.disabled = true;
                 submitBtn.innerText = message;
                 submitBtn.className = "w-full bg-slate-300 text-slate-500 font-bold py-3 px-4 rounded-xl cursor-not-allowed text-center block";
             } else {
-                // 解除鎖定基本資料
                 basicInputs.forEach(el => {
                     el.disabled = false;
                     el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionBasicInfo.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除數量框
                 box15Input.disabled = false;
                 box15Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox15.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除發票備註
                 invoiceInputs.forEach(el => {
                     el.disabled = false;
                     el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 });
                 sectionInvoice.classList.remove('bg-gray-100', 'opacity-60');
 
-                // 解除按鈕
                 submitBtn.disabled = false;
                 submitBtn.innerText = "確認送出預購訂單";
                 submitBtn.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-200 shadow-md cursor-pointer text-center block";
             }
         }
 
+        // 處理日期變更與預估到貨日推算
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
             const box6Input = document.getElementById('box6');
@@ -345,6 +340,7 @@
             const peakNotice = document.getElementById('peakNotice');
             const blockBox6 = document.getElementById('block_box6');
             const freeShippingNotice = document.getElementById('freeShippingNotice');
+            const arrivalNotice = document.getElementById('estimatedArrivalNotice');
 
             box6Input.value = 0;
             box15Input.value = 0;
@@ -353,11 +349,29 @@
             if (!shipDate) {
                 document.getElementById('stock_pieces_lbl').innerText = "--";
                 document.getElementById('stock_box15_lbl').innerText = "--";
+                arrivalNotice.classList.add('hidden');
                 setFormDisabled(false);
                 return;
             }
 
-            // 檢查免運區間 (8/3 ~ 8/17) -> 全面灰化鎖定
+            // (2) 額外設定預設到貨日提示
+            try {
+                const dateObj = new Date(shipDate);
+                if (!isNaN(dateObj.getTime())) {
+                    const d1 = new Date(dateObj); d1.setDate(d1.getDate() + 1);
+                    const d2 = new Date(dateObj); d2.setDate(d2.getDate() + 2);
+                    
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const m1 = pad(d1.getMonth() + 1), dd1 = pad(d1.getDate());
+                    const m2 = pad(d2.getMonth() + 1), dd2 = pad(d2.getDate());
+                    
+                    arrivalNotice.innerHTML = `💡 預計到貨日：${m1}/${dd1} ～ ${m2}/${dd2} 左右抵達`;
+                    arrivalNotice.classList.remove('hidden');
+                }
+            } catch(e) {
+                arrivalNotice.classList.add('hidden');
+            }
+
             if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
                 freeShippingNotice.classList.remove('hidden');
                 document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
@@ -373,7 +387,6 @@
             document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
             document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
-            // 向後端請求庫存
             fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
             .then(res => res.json())
             .then(data => {
@@ -405,12 +418,10 @@
                 document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
                 document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
 
-                // 檢查是否滿單，或是進入高峰期不開放6入
                 if (remainingTotalPieces <= 0) {
                     setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
                 } else {
                     setFormDisabled(false);
-                    // 💡 8/25 (含) 以後鎖定 6 入宅配（8/24 依然可以選）
                     if (shipDate >= '2026/08/25') {
                         box6Input.disabled = true;
                         box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
@@ -434,7 +445,6 @@
         function checkStock() {
             const box6Val = parseInt(document.getElementById('box6').value) || 0;
             const box15Val = parseInt(document.getElementById('box15').value) || 0;
-            
             const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
 
             if (totalSelectedPieces > remainingTotalPieces) {
@@ -565,6 +575,7 @@
             });
         });
 
+        // 修改訂單查詢邏輯：嵌入完整的匯款帳號明細
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('searchEmail').value;
@@ -583,7 +594,7 @@
                 searchBtn.innerText = "查詢所有訂單";
                 
                 if(data.status === "success" && data.orders && data.orders.length > 0) {
-                    let ordersHtml = `<div class="space-y-3"><p class="text-emerald-700 font-bold">✨ 共找到 ${data.orders.length} 筆以此信箱訂購的紀錄：</p>`;
+                    let ordersHtml = `<div class="space-y-4"><p class="text-emerald-700 font-bold">✨ 共找到 ${data.orders.length} 筆以此信箱訂購的紀錄：</p>`;
                     
                     data.orders.forEach((ord, index) => {
                         ordersHtml += `
@@ -600,8 +611,28 @@
                         `;
                     });
 
+                    // (1) 嵌入匯款帳號大卡片至查詢結果
                     ordersHtml += `
-                        <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 space-y-1">
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 text-left space-y-3 mt-4 shadow-xs">
+                            <h4 class="font-bold text-slate-700 text-sm border-b border-slate-100 pb-1.5 flex items-center gap-1">🏦 轉帳匯款帳號資訊</h4>
+                            <div class="text-xs space-y-2 text-slate-700">
+                                <div><strong>🏦 銀行名稱：</strong> 彰化五信 (總行代號：161)</div>
+                                <div><strong>🏪 分行名稱：</strong> 華山分社</div>
+                                <div class="flex justify-between items-center bg-slate-50 p-2 border border-slate-200 rounded-lg">
+                                    <div><strong>🔢 匯款帳號：</strong> <span class="font-mono font-bold text-slate-900 select-all">00022111088890</span></div>
+                                    <button onclick="copyAccountText('00022111088890')" class="text-[10px] font-bold bg-white hover:bg-slate-100 px-2 py-1 rounded border border-slate-200 transition duration-100 cursor-pointer">📋 複製</button>
+                                </div>
+                                <div><strong>👤 戶名：</strong> 紀家烘焙坊-吳亭緯</div>
+                            </div>
+                            <div class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200/60 rounded-lg p-3 space-y-1.5">
+                                <p class="font-bold text-amber-900">📢 匯款完成請您通知，並提供帳戶後5碼</p>
+                                <p>轉帳成功後，請前往我們的 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-700 font-bold underline">官方 LINE 客服</a> 告知，並提供帳戶後 5 碼以利對帳。</p>
+                            </div>
+                        </div>
+                    `;
+
+                    ordersHtml += `
+                        <div class="p-3 bg-amber-50/50 border border-amber-200/50 rounded-lg text-xs text-amber-900 space-y-1">
                             <p class="font-bold">⚠️ 注意事項：</p>
                             <p>系統不提供自行取消或修改功能。如需更改訂單內容或辦理取消，請直接私訊 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-700 font-bold underline">官方 LINE 客服</a> 協助處理！</p>
                         </div>
@@ -620,10 +651,15 @@
             });
         });
 
-        function copyBankAccount() {
-            navigator.clipboard.writeText("00022111088890").then(() => { 
-                alert("📋 彰化五信帳號 (00022111088890) 已複製！"); 
+        // 獨立出的通用複製文字函式
+        function copyAccountText(text) {
+            navigator.clipboard.writeText(text).then(() => { 
+                alert(`📋 彰化五信帳號 (${text}) 已複製！`); 
             });
+        }
+
+        function copyBankAccount() {
+            copyAccountText("00022111088890");
         }
         
         function resetAndWriteAnotherOrder() {
