@@ -328,7 +328,7 @@
             }
         }
 
-        // 處理日期變更與預估到貨日推算
+        // 處理日期變更與預估到貨日推算（已加入星期顯示）
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
             const box6Input = document.getElementById('box6');
@@ -350,18 +350,20 @@
                 return;
             }
 
-            // (2) 額外設定預設到貨日提示
+            // (2) 額外設定預設到貨日提示（修正為包含星期）
             try {
                 const dateObj = new Date(shipDate);
                 if (!isNaN(dateObj.getTime())) {
+                    const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
                     const d1 = new Date(dateObj); d1.setDate(d1.getDate() + 1);
                     const d2 = new Date(dateObj); d2.setDate(d2.getDate() + 2);
                     
                     const pad = (n) => String(n).padStart(2, '0');
-                    const m1 = pad(d1.getMonth() + 1), dd1 = pad(d1.getDate());
-                    const m2 = pad(d2.getMonth() + 1), dd2 = pad(d2.getDate());
+                    const m1 = pad(d1.getMonth() + 1), dd1 = pad(d1.getDate()), w1 = weekDays[d1.getDay()];
+                    const m2 = pad(d2.getMonth() + 1), dd2 = pad(d2.getDate()), w2 = weekDays[d2.getDay()];
                     
-                    arrivalNotice.innerHTML = `💡 預計到貨日：${m1}/${dd1} ～ ${m2}/${dd2} 左右抵達`;
+                    arrivalNotice.innerHTML = `💡 預計到貨日：${m1}/${dd1} (${w1}) ～ ${m2}/${dd2} (${w2}) 左右抵達`;
                     arrivalNotice.classList.remove('hidden');
                 }
             } catch(e) {
