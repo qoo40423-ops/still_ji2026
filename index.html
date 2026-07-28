@@ -13,7 +13,17 @@
         <!-- 頁首標題 -->
         <div class="text-center space-y-2">
             <h1 class="text-3xl font-black text-amber-700">📦 紀家烘焙坊</h1>
-            <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統（自訂數量版）</p>
+            <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統</p>
+        </div>
+
+        <!-- 🔄 新增：功能頁籤切換按鈕 (與圖片款式相同) -->
+        <div class="grid grid-cols-2 gap-3">
+            <button id="tab-order" onclick="switchTab('order')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
+                訂購
+            </button>
+            <button id="tab-search" onclick="switchTab('search')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
+                查詢/取消
+            </button>
         </div>
 
         <!-- 區塊一：填寫訂單區 -->
@@ -22,7 +32,7 @@
             <!-- 🏪 自取客人分流公告 -->
             <div class="bg-amber-100 border-l-4 border-amber-600 rounded-r-2xl p-4 shadow-sm text-sm text-amber-950 space-y-2">
                 <p class="font-bold flex items-center gap-1.5 text-base">🏪 店內自取客人請注意：</p>
-                <p>本系統僅提供「**宅配寄送**」填單。若您需要到店自取，請勿在此填寫，請點擊下方連結前往專屬網頁訂購：</p>
+                <p>本系統僅提供「宅配服務」。若您需要到店自取，請勿在此填寫，請點擊下方連結前往專屬網頁訂購：</p>
                 <a href="https://line.me/ti/p/~@833smajx" target="_blank" class="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-xs shadow-sm mt-1 cursor-pointer">
                     👉 點此前往【自取專用訂購網頁】
                 </a>
@@ -121,9 +131,9 @@
                         
                         <!-- 6入品項 -->
                         <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
-                            <img src="6boxes.jpg" alt="6入精緻裝" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
                             <div class="flex-1 space-y-1">
-                                <h4 class="font-bold text-slate-800">🎁 6入精緻裝 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
+                                <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
                                 <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
                                 <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 08/25 起之中秋高峰期，此規格不開放宅配。</p>
@@ -136,9 +146,9 @@
 
                         <!-- 15入品項 -->
                         <div id="block_box15" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
-                            <img src="15boxes.jpg" alt="15入伴手禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <img src="15boxes.jpg" alt="15入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
                             <div class="flex-1 space-y-1">
-                                <h4 class="font-bold text-slate-800">🧧 15入伴手禮盒 <span class="text-amber-700 ml-1">(NT$ 750 / 盒)</span></h4>
+                                <h4 class="font-bold text-slate-800">🧧 15入禮盒 <span class="text-amber-700 ml-1">(NT$ 750 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 最少需滿 4 盒以上才出貨</p>
                                 <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 換算大盒剩餘約：<span id="stock_box15_lbl">--</span> 盒</p>
                             </div>
@@ -190,22 +200,21 @@
                     </button>
                 </form>
             </div>
+        </div>
 
-            <!-- 🔍 訂單查詢與客服協助區塊 -->
-            <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
-                <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
-                <p class="text-xs text-slate-500">請輸入您下單時填寫的訂購信箱，系統將自動撈取以此信箱建立的**所有歷史訂單**紀錄。</p>
-                <form id="searchForm" class="space-y-3">
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="email" id="searchEmail" required placeholder="請輸入電子郵件" class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <button type="submit" id="searchBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-bold py-2 px-5 rounded-lg transition duration-150 cursor-pointer">
-                            查詢所有訂單
-                        </button>
-                    </div>
-                </form>
-                <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-            </div>
-
+        <!-- 🔍 調整：將訂單查詢移出來，並預設隱藏 (hidden) -->
+        <div id="searchContainer" class="hidden bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
+            <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
+            <p class="text-xs text-slate-500">請輸入您下單時填寫的訂購信箱</p>
+            <form id="searchForm" class="space-y-3">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" id="searchEmail" required placeholder="請輸入電子郵件" class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <button type="submit" id="searchBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-bold py-2 px-5 rounded-lg transition duration-150 cursor-pointer">
+                        查詢所有訂單
+                    </button>
+                </div>
+            </form>
+            <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
         </div>
 
         <!-- 區塊二：真實匯款資訊大卡片 -->
@@ -264,6 +273,36 @@
             document.getElementById('stock_box15_lbl').innerText = "--";
             calculateTotal();
         };
+
+        // 🔄 新增：切換頁籤的 JavaScript 邏輯
+        function switchTab(type) {
+            const formContainer = document.getElementById('formContainer');
+            const searchContainer = document.getElementById('searchContainer');
+            const tabOrder = document.getElementById('tab-order');
+            const tabSearch = document.getElementById('tab-search');
+            const successBankCard = document.getElementById('successBankCard');
+
+            // 如果已經成功送出訂單，切換時隱藏成功畫面
+            if (!successBankCard.classList.contains('hidden')) {
+                successBankCard.classList.add('hidden');
+            }
+
+            if (type === 'order') {
+                formContainer.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+                
+                // 訂購按鈕高亮 (橘色)，查詢按鈕變灰
+                tabOrder.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
+                tabSearch.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
+            } else {
+                formContainer.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                
+                // 查詢按鈕高亮 (橘色)，訂購按鈕變灰
+                tabOrder.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
+                tabSearch.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
+            }
+        }
 
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
             const box6Input = document.getElementById('box6');
@@ -325,7 +364,6 @@
             }
         }
 
-        // 處理日期變更與預估到貨日推算（已加入星期顯示）
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
             const box6Input = document.getElementById('box6');
@@ -347,7 +385,6 @@
                 return;
             }
 
-            // (2) 額外設定預設到貨日提示（修正為包含星期）
             try {
                 const dateObj = new Date(shipDate);
                 if (!isNaN(dateObj.getTime())) {
@@ -570,7 +607,6 @@
             });
         });
 
-        // 修改訂單查詢邏輯：嵌入完整的匯款帳號明細
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('searchEmail').value;
@@ -580,7 +616,7 @@
             searchBtn.disabled = true;
             searchBtn.innerText = "🔍 查詢中...";
             resultDiv.classList.remove('hidden');
-            resultDiv.innerHTML = "<p class='text-slate-500 animate-pulse'>正在向雲端資料庫撈取歷史訂單中，請稍候...</p>";
+            resultDiv.innerHTML = "<p class='text-slate-500 animate-pulse'>查詢中，請稍候...</p>";
 
             fetch(`${GAS_WEB_APP_URL}?action=queryOrder&email=${encodeURIComponent(email)}`)
             .then(res => res.json())
@@ -606,7 +642,6 @@
                         `;
                     });
 
-                    // (1) 嵌入匯款帳號大卡片至查詢結果
                     ordersHtml += `
                         <div class="bg-white border border-slate-200 rounded-xl p-4 text-left space-y-3 mt-4 shadow-xs">
                             <h4 class="font-bold text-slate-700 text-sm border-b border-slate-100 pb-1.5 flex items-center gap-1">🏦 轉帳匯款帳號資訊</h4>
@@ -646,7 +681,6 @@
             });
         });
 
-        // 獨立出的通用複製文字函式
         function copyAccountText(text) {
             navigator.clipboard.writeText(text).then(() => { 
                 alert(`📋 彰化五信帳號 (${text}) 已複製！`); 
