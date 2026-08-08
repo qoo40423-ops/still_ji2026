@@ -66,10 +66,11 @@
                                     <option value="2026/08/19">2026/08/19 (三)</option>
                                     <option value="2026/08/20">2026/08/20 (四)</option>
                                     <option value="2026/08/21">2026/08/21 (五)</option>
-                                    <option value="2026/08/25">2026/08/25 (二) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/26">2026/08/26 (三) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/27">2026/08/27 (四) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/28">2026/08/28 (五) 【中秋高峰-不開放6入】</option>
+                                    <option value="2026/08/25">2026/08/25 (二)</option>
+                                    <option value="2026/08/26">2026/08/26 (三)</option>
+                                    <option value="2026/08/27">2026/08/27 (四)</option>
+                                    <option value="2026/08/28">2026/08/28 (五)</option>
+                                    <option value="2026/08/31">2026/08/31 (一)</option>
                                     <option value="2026/09/02">2026/09/02 (三) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/03">2026/09/03 (四) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/04">2026/09/04 (五) 【中秋高峰-不開放6入】</option>                                    
@@ -128,11 +129,21 @@
                                 <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
                                 <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
-                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 08/25 起之中秋高峰期，此規格不開放宅配。</p>
+                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/01 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
-                            <div class="flex items-center space-x-2 justify-end">
-                                <input type="number" id="box6" min="0" step="15" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                <span class="text-xs font-medium text-slate-500">盒</span>
+                            <div class="flex flex-col md:flex-row items-end md:items-center gap-2">
+                                <!-- 新增：快捷選項 -->
+                                <select id="box6Preset" onchange="applyBox6Preset(this.value)" class="text-xs px-2 py-1.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <option value="">快速選擇組數</option>
+                                    <option value="10">6入 * 10盒</option>
+                                    <option value="15">6入 * 15盒 (1箱)</option>
+                                    <option value="30">6入 * 30盒 (2箱)</option>
+                                    <option value="45">6入 * 45盒 (3箱)</option>
+                                </select>
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" id="box6" min="0" step="1" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                    <span class="text-xs font-medium text-slate-500">盒</span>
+                                </div>
                             </div>
                         </div>
 
@@ -302,6 +313,7 @@
             const submitBtn = document.getElementById('submitBtn');
             const blockBox6 = document.getElementById('block_box6');
             const blockBox15 = document.getElementById('block_box15');
+            const box6Preset = document.getElementById('box6Preset');
             
             const sectionBasicInfo = document.getElementById('sectionBasicInfo');
             const sectionInvoice = document.getElementById('sectionInvoice');
@@ -318,6 +330,7 @@
 
                 box6Input.disabled = true;
                 box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                box6Preset.disabled = true;
                 blockBox6.classList.add('bg-gray-100', 'opacity-60');
 
                 box15Input.disabled = true;
@@ -356,9 +369,18 @@
             }
         }
 
+        function applyBox6Preset(val) {
+            if (val !== "") {
+                document.getElementById('box6').value = parseInt(val);
+                checkStock();
+                calculateTotal();
+            }
+        }
+
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
             const box6Input = document.getElementById('box6');
+            const box6Preset = document.getElementById('box6Preset');
             const box15Input = document.getElementById('box15');
             const peakNotice = document.getElementById('peakNotice');
             const blockBox6 = document.getElementById('block_box6');
@@ -367,6 +389,7 @@
 
             box6Input.value = 0;
             box15Input.value = 0;
+            box6Preset.value = "";
             calculateTotal();
 
             if (!shipDate) {
@@ -446,13 +469,15 @@
                     setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
                 } else {
                     setFormDisabled(false);
-                    if (shipDate >= '2026/08/25') {
+                    if (shipDate >= '2026/09/01') {
                         box6Input.disabled = true;
+                        box6Preset.disabled = true;
                         box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                         peakNotice.classList.remove('hidden');
                         blockBox6.classList.add('bg-gray-100', 'opacity-60');
                     } else {
                         box6Input.disabled = false;
+                        box6Preset.disabled = false;
                         box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                         peakNotice.classList.add('hidden');
                         blockBox6.classList.remove('bg-gray-100', 'opacity-60');
@@ -475,6 +500,7 @@
                 alert(`⚠️ 您選購的總顆數 (${totalSelectedPieces} 顆) 已超過該日期的剩餘可接單總量 (${remainingTotalPieces} 顆)！`);
                 document.getElementById('box6').value = 0;
                 document.getElementById('box15').value = 0;
+                document.getElementById('box6Preset').value = "";
                 calculateTotal();
             }
         }
@@ -482,10 +508,6 @@
         function validateBox6Multiplier() {
             const box6Input = document.getElementById('box6');
             let val = parseInt(box6Input.value) || 0;
-            if (val > 0 && val % 15 !== 0) {
-                alert("💡 6入規格需以 15 盒為單位（滿箱）才出貨唷！");
-                box6Input.value = Math.ceil(val / 15) * 15;
-            }
             checkStock();
             calculateTotal();
         }
@@ -519,12 +541,12 @@
             let eastShippingFee = 0;
 
             if (!isFreeShipping) {
-                const ship6 = (box6 / 15) * 170;
+                const ship6 = Math.ceil(box6 / 15) * 170;
                 const ship15 = box15 >= 4 ? Math.ceil(box15 / 10) * 210 : 0;
-                baseShippingFee = ship6 + ship15;
+                baseShippingFee = (box6 > 0 ? ship6 : 0) + ship15;
 
                 if (address && (address.includes('宜蘭') || address.includes('花蓮') || address.includes('台東') || address.includes('臺東'))) {
-                    const box6Boxes = box6 / 15;
+                    const box6Boxes = Math.ceil(box6 / 15);
                     const box15Boxes = box15 >= 4 ? Math.ceil(box15 / 10) : 0;
                     eastShippingFee = (box6Boxes + box15Boxes) * 10;
                 }
