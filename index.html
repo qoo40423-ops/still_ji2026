@@ -16,7 +16,7 @@
             <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統</p>
         </div>
 
-        <!-- 🔄 新增：功能頁籤切換按鈕 (與圖片款式相同) -->
+        <!-- 功能頁籤切換按鈕 -->
         <div class="grid grid-cols-2 gap-3">
             <button id="tab-order" onclick="switchTab('order')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
                 訂購
@@ -29,7 +29,7 @@
         <!-- 區塊一：填寫訂單區 -->
         <div id="formContainer" class="space-y-6">
             
-            <!-- 🏪 自取客人分流公告 -->
+            <!-- 店內自取客人分流公告 -->
             <div class="bg-amber-100 border-l-4 border-amber-600 rounded-r-2xl p-4 shadow-sm text-sm text-amber-950 space-y-2">
                 <p class="font-bold flex items-center gap-1.5 text-base">🏪 店內自取客人請注意：</p>
                 <p>本系統僅提供「宅配服務」。若您需要到店自取，請勿在此填寫，請點擊下方連結前往專屬網頁訂購：</p>
@@ -38,7 +38,7 @@
                 </a>
             </div>
 
-            <!-- 🚚 免運分流公告 -->
+            <!-- 免運分流公告 -->
             <div id="freeShippingNotice" class="hidden bg-emerald-100 border-l-4 border-emerald-600 rounded-r-2xl p-4 shadow-sm text-sm text-emerald-950 space-y-2">
                 <p class="font-bold flex items-center gap-1.5 text-base">🎉 恭喜！您選擇的區間享有免運優惠：</p>
                 <p>您所選擇的配送日期 (**8/3 ~ 8/17**) 期間享有**免運特別優惠**！為了確保您的免運權益，請移駕至下方免運專屬網頁進行下單：</p>
@@ -75,7 +75,6 @@
                                     <option value="2026/09/03">2026/09/03 (四) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/04">2026/09/04 (五) 【中秋高峰-不開放6入】</option>                                    
                                 </select>
-                                <!-- 預設到貨日自動提示區塊 -->
                                 <p id="estimatedArrivalNotice" class="hidden text-xs text-amber-700 font-bold mt-1.5 bg-amber-50 px-2 py-1 rounded border border-amber-200/60"></p>
                             </div>
                             <div>
@@ -122,28 +121,25 @@
                     <div class="space-y-4">
                         <label class="block text-sm font-bold text-slate-700">🛒 訂購數量與即時庫存</label>
                         
-                        <!-- 6入品項 -->
+                        <!-- 🌟 6入品項：改為選單下拉跳階 (10/15/25/30/35/40) -->
                         <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
                             <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
                             <div class="flex-1 space-y-1">
                                 <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
-                                <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
+                                <p class="text-xs text-slate-400">※ 固定量販盒數選擇，無法任意填寫顆數</p>
                                 <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
                                 <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/01 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
-                            <div class="flex flex-col md:flex-row items-end md:items-center gap-2">
-                                <!-- 新增：快捷選項 -->
-                                <select id="box6Preset" onchange="applyBox6Preset(this.value)" class="text-xs px-2 py-1.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                    <option value="">快速選擇組數</option>
-                                    <option value="10">6入 * 10盒</option>
-                                    <option value="15">6入 * 15盒 (1箱)</option>
-                                    <option value="30">6入 * 30盒 (2箱)</option>
-                                    <option value="45">6入 * 45盒 (3箱)</option>
+                            <div class="flex items-center space-x-2 justify-end">
+                                <select id="box6" onchange="checkStock(); calculateTotal();" class="px-3 py-2 border border-slate-300 rounded-lg font-bold text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
+                                    <option value="0">0 盒 (不選購)</option>
+                                    <option value="10">10 盒</option>
+                                    <option value="15">15 盒 (1箱)</option>
+                                    <option value="25">25 盒</option>
+                                    <option value="30">30 盒 (2箱)</option>
+                                    <option value="35">35 盒</option>
+                                    <option value="40">40 盒</option>
                                 </select>
-                                <div class="flex items-center space-x-2">
-                                    <input type="number" id="box6" min="0" step="1" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                    <span class="text-xs font-medium text-slate-500">盒</span>
-                                </div>
                             </div>
                         </div>
 
@@ -205,7 +201,7 @@
             </div>
         </div>
 
-        <!-- 🔍 調整：將訂單查詢移出來，並預設隱藏 (hidden) -->
+        <!-- 訂單查詢 Container -->
         <div id="searchContainer" class="hidden bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
             <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
             <p class="text-xs text-slate-500">請輸入您下單時填寫的訂購信箱</p>
@@ -220,7 +216,7 @@
             <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
         </div>
 
-        <!-- 區塊二：真實匯款資訊大卡片 -->
+        <!-- 匯款資訊卡片 -->
         <div id="successBankCard" class="hidden bg-white shadow-md rounded-2xl p-6 border-2 border-emerald-500 space-y-5 text-center transition duration-300">
             <div class="space-y-1">
                 <div class="text-4xl">🎉</div>
@@ -228,7 +224,6 @@
                 <p class="text-xs text-slate-500">系統已同步將資料寫入雲端檔案，請於三日內完成匯款。</p>
             </div>
 
-            <!-- 抽離出來的匯款帳號明細模板 -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left max-w-md mx-auto space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-200/60 pb-2">
                     <span class="text-sm font-bold text-slate-600">💰 應匯款總金額：</span>
@@ -277,7 +272,6 @@
             calculateTotal();
         };
 
-        // 🔄 新增：切換頁籤的 JavaScript 邏輯
         function switchTab(type) {
             const formContainer = document.getElementById('formContainer');
             const searchContainer = document.getElementById('searchContainer');
@@ -285,7 +279,6 @@
             const tabSearch = document.getElementById('tab-search');
             const successBankCard = document.getElementById('successBankCard');
 
-            // 如果已經成功送出訂單，切換時隱藏成功畫面
             if (!successBankCard.classList.contains('hidden')) {
                 successBankCard.classList.add('hidden');
             }
@@ -294,26 +287,23 @@
                 formContainer.classList.remove('hidden');
                 searchContainer.classList.add('hidden');
                 
-                // 訂購按鈕高亮 (橘色)，查詢按鈕變灰
                 tabOrder.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
                 tabSearch.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
             } else {
                 formContainer.classList.add('hidden');
                 searchContainer.classList.remove('hidden');
                 
-                // 查詢按鈕高亮 (橘色)，訂購按鈕變灰
                 tabOrder.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
                 tabSearch.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
             }
         }
 
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
-            const box6Input = document.getElementById('box6');
+            const box6Select = document.getElementById('box6');
             const box15Input = document.getElementById('box15');
             const submitBtn = document.getElementById('submitBtn');
             const blockBox6 = document.getElementById('block_box6');
             const blockBox15 = document.getElementById('block_box15');
-            const box6Preset = document.getElementById('box6Preset');
             
             const sectionBasicInfo = document.getElementById('sectionBasicInfo');
             const sectionInvoice = document.getElementById('sectionInvoice');
@@ -328,9 +318,8 @@
                 });
                 sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
 
-                box6Input.disabled = true;
-                box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                box6Preset.disabled = true;
+                box6Select.disabled = true;
+                box6Select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                 blockBox6.classList.add('bg-gray-100', 'opacity-60');
 
                 box15Input.disabled = true;
@@ -369,27 +358,17 @@
             }
         }
 
-        function applyBox6Preset(val) {
-            if (val !== "") {
-                document.getElementById('box6').value = parseInt(val);
-                checkStock();
-                calculateTotal();
-            }
-        }
-
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
-            const box6Input = document.getElementById('box6');
-            const box6Preset = document.getElementById('box6Preset');
+            const box6Select = document.getElementById('box6');
             const box15Input = document.getElementById('box15');
             const peakNotice = document.getElementById('peakNotice');
             const blockBox6 = document.getElementById('block_box6');
             const freeShippingNotice = document.getElementById('freeShippingNotice');
             const arrivalNotice = document.getElementById('estimatedArrivalNotice');
 
-            box6Input.value = 0;
+            box6Select.value = 0;
             box15Input.value = 0;
-            box6Preset.value = "";
             calculateTotal();
 
             if (!shipDate) {
@@ -470,15 +449,14 @@
                 } else {
                     setFormDisabled(false);
                     if (shipDate >= '2026/09/01') {
-                        box6Input.disabled = true;
-                        box6Preset.disabled = true;
-                        box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        box6Select.value = 0;
+                        box6Select.disabled = true;
+                        box6Select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                         peakNotice.classList.remove('hidden');
                         blockBox6.classList.add('bg-gray-100', 'opacity-60');
                     } else {
-                        box6Input.disabled = false;
-                        box6Preset.disabled = false;
-                        box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        box6Select.disabled = false;
+                        box6Select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                         peakNotice.classList.add('hidden');
                         blockBox6.classList.remove('bg-gray-100', 'opacity-60');
                     }
@@ -500,16 +478,8 @@
                 alert(`⚠️ 您選購的總顆數 (${totalSelectedPieces} 顆) 已超過該日期的剩餘可接單總量 (${remainingTotalPieces} 顆)！`);
                 document.getElementById('box6').value = 0;
                 document.getElementById('box15').value = 0;
-                document.getElementById('box6Preset').value = "";
                 calculateTotal();
             }
-        }
-
-        function validateBox6Multiplier() {
-            const box6Input = document.getElementById('box6');
-            let val = parseInt(box6Input.value) || 0;
-            checkStock();
-            calculateTotal();
         }
 
         function validateBox15Min() {
@@ -571,7 +541,7 @@
             const box6 = parseInt(document.getElementById('box6').value) || 0;
             const box15 = parseInt(document.getElementById('box15').value) || 0;
 
-            if (box6 === 0 && box15 === 0) { alert("❌ 請至少輸入一種商品的訂購數量！"); return; }
+            if (box6 === 0 && box15 === 0) { alert("❌ 請至少選擇一種商品的訂購數量！"); return; }
             if (box15 > 0 && box15 < 4) { alert("❌ 15入規格至少需滿 4 盒以上才出貨唷！"); return; }
 
             const submitBtn = document.getElementById('submitBtn');
@@ -701,10 +671,6 @@
             });
         }
 
-        function copyBankAccount() {
-            copyAccountText("00022111088890");
-        }
-        
         function resetAndWriteAnotherOrder() {
             location.reload();
         }
