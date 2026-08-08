@@ -121,25 +121,38 @@
                     <div class="space-y-4">
                         <label class="block text-sm font-bold text-slate-700">🛒 訂購數量與即時庫存</label>
                         
-                        <!-- 🌟 6入品項：改為選單下拉跳階 (10/15/25/30/35/40) -->
-                        <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                        <!-- 🌟 6入禮盒 - 10盒裝箱品項 -->
+                        <div id="block_box6_10" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
                             <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
                             <div class="flex-1 space-y-1">
-                                <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
-                                <p class="text-xs text-slate-400">※ 固定量販盒數選擇，無法任意填寫顆數</p>
-                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
-                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/01 起之中秋高峰期，此規格不開放宅配。</p>
+                                <h4 class="font-bold text-slate-800">🎁 6入禮盒 (10盒裝 / 箱) <span class="text-amber-700 ml-1">(NT$ 3,000 / 箱)</span></h4>
+                                <p class="text-xs text-slate-400">※ 每箱內含 10 盒，單盒折扣價 $300</p>
+                                <p id="peakNotice10" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/01 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
-                                <select id="box6" onchange="checkStock(); calculateTotal();" class="px-3 py-2 border border-slate-300 rounded-lg font-bold text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer">
-                                    <option value="0">0 盒 (不選購)</option>
-                                    <option value="10">10 盒</option>
-                                    <option value="15">15 盒 (1箱)</option>
-                                    <option value="20">20 盒</option>
-                                    <option value="30">30 盒 (2箱)</option>
-                                    <option value="45">45 盒 (3箱)</option>
-                                </select>
+                                <input type="number" id="box6_10" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">箱</span>
                             </div>
+                        </div>
+
+                        <!-- 🌟 6入禮盒 - 15盒裝箱品項 -->
+                        <div id="block_box6_15" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                            <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <div class="flex-1 space-y-1">
+                                <h4 class="font-bold text-slate-800">🎁 6入禮盒 (15盒裝 / 箱) <span class="text-amber-700 ml-1">(NT$ 4,500 / 箱)</span></h4>
+                                <p class="text-xs text-slate-400">※ 每箱內含 15 盒，單盒折扣價 $300</p>
+                                <p id="peakNotice15" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/01 起之中秋高峰期，此規格不開放宅配。</p>
+                            </div>
+                            <div class="flex items-center space-x-2 justify-end">
+                                <input type="number" id="box6_15" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">箱</span>
+                            </div>
+                        </div>
+
+                        <!-- 庫存看板 -->
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-xs font-bold text-emerald-800 flex justify-between items-center">
+                            <span>🔥 當日剩餘總可接單容量：</span>
+                            <span><span id="stock_pieces_lbl">--</span> 顆 (約 <span id="stock_box15_lbl">--</span> 大盒)</span>
                         </div>
 
                         <!-- 15入品項 -->
@@ -148,7 +161,6 @@
                             <div class="flex-1 space-y-1">
                                 <h4 class="font-bold text-slate-800">🧧 15入禮盒 <span class="text-amber-700 ml-1">(NT$ 750 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 最少需滿 4 盒以上才出貨</p>
-                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 換算大盒剩餘約：<span id="stock_box15_lbl">--</span> 盒</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
                                 <input type="number" id="box15" min="0" value="0" oninput="checkStock(); calculateTotal();" onblur="validateBox15Min();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -298,10 +310,12 @@
         }
 
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
-            const box6Select = document.getElementById('box6');
+            const box6_10 = document.getElementById('box6_10');
+            const box6_15 = document.getElementById('box6_15');
             const box15Input = document.getElementById('box15');
             const submitBtn = document.getElementById('submitBtn');
-            const blockBox6 = document.getElementById('block_box6');
+            const blockBox6_10 = document.getElementById('block_box6_10');
+            const blockBox6_15 = document.getElementById('block_box6_15');
             const blockBox15 = document.getElementById('block_box15');
             
             const sectionBasicInfo = document.getElementById('sectionBasicInfo');
@@ -317,13 +331,11 @@
                 });
                 sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
 
-                box6Select.disabled = true;
-                box6Select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                blockBox6.classList.add('bg-gray-100', 'opacity-60');
-
-                box15Input.disabled = true;
-                box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                blockBox15.classList.add('bg-gray-100', 'opacity-60');
+                [box6_10, box6_15, box15Input].forEach(el => {
+                    el.disabled = true;
+                    el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                [blockBox6_10, blockBox6_15, blockBox15].forEach(el => el.classList.add('bg-gray-100', 'opacity-60'));
 
                 invoiceInputs.forEach(el => {
                     el.disabled = true;
@@ -359,14 +371,18 @@
 
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
-            const box6Select = document.getElementById('box6');
+            const box6_10 = document.getElementById('box6_10');
+            const box6_15 = document.getElementById('box6_15');
             const box15Input = document.getElementById('box15');
-            const peakNotice = document.getElementById('peakNotice');
-            const blockBox6 = document.getElementById('block_box6');
+            const peakNotice10 = document.getElementById('peakNotice10');
+            const peakNotice15 = document.getElementById('peakNotice15');
+            const blockBox6_10 = document.getElementById('block_box6_10');
+            const blockBox6_15 = document.getElementById('block_box6_15');
             const freeShippingNotice = document.getElementById('freeShippingNotice');
             const arrivalNotice = document.getElementById('estimatedArrivalNotice');
 
-            box6Select.value = 0;
+            box6_10.value = 0;
+            box6_15.value = 0;
             box15Input.value = 0;
             calculateTotal();
 
@@ -448,16 +464,24 @@
                 } else {
                     setFormDisabled(false);
                     if (shipDate >= '2026/09/01') {
-                        box6Select.value = 0;
-                        box6Select.disabled = true;
-                        box6Select.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        peakNotice.classList.remove('hidden');
-                        blockBox6.classList.add('bg-gray-100', 'opacity-60');
+                        [box6_10, box6_15].forEach(el => {
+                            el.value = 0;
+                            el.disabled = true;
+                            el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        });
+                        peakNotice10.classList.remove('hidden');
+                        peakNotice15.classList.remove('hidden');
+                        blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
+                        blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
                     } else {
-                        box6Select.disabled = false;
-                        box6Select.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        peakNotice.classList.add('hidden');
-                        blockBox6.classList.remove('bg-gray-100', 'opacity-60');
+                        [box6_10, box6_15].forEach(el => {
+                            el.disabled = false;
+                            el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        });
+                        peakNotice10.classList.add('hidden');
+                        peakNotice15.classList.add('hidden');
+                        blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
+                        blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
                     }
                 }
             })
@@ -469,13 +493,16 @@
         }
 
         function checkStock() {
-            const box6Val = parseInt(document.getElementById('box6').value) || 0;
-            const box15Val = parseInt(document.getElementById('box15').value) || 0;
-            const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
+            const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
+            const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
+            const b15 = parseInt(document.getElementById('box15').value) || 0;
+            
+            const totalSelectedPieces = (b6_10 * 10 * 6) + (b6_15 * 15 * 6) + (b15 * 15);
 
             if (totalSelectedPieces > remainingTotalPieces) {
                 alert(`⚠️ 您選購的總顆數 (${totalSelectedPieces} 顆) 已超過該日期的剩餘可接單總量 (${remainingTotalPieces} 顆)！`);
-                document.getElementById('box6').value = 0;
+                document.getElementById('box6_10').value = 0;
+                document.getElementById('box6_15').value = 0;
                 document.getElementById('box15').value = 0;
                 calculateTotal();
             }
@@ -498,26 +525,29 @@
         }
 
         function calculateTotal() {
-            const box6 = parseInt(document.getElementById('box6').value) || 0;
-            const box15 = parseInt(document.getElementById('box15').value) || 0;
+            const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
+            const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
+            const b15 = parseInt(document.getElementById('box15').value) || 0;
+            
             const address = document.getElementById('receiveAddress').value;
             const shipDate = document.getElementById('shipDate').value;
 
-            const productTotal = (box6 * 300) + (box15 * 750);
+            // 商品總價試算
+            const productTotal = (b6_10 * 3000) + (b6_15 * 4500) + (b15 * 750);
             const isFreeShipping = (shipDate >= '2026/08/03' && shipDate <= '2026/08/17');
 
             let baseShippingFee = 0;
             let eastShippingFee = 0;
 
             if (!isFreeShipping) {
-                const ship6 = Math.ceil(box6 / 15) * 170;
-                const ship15 = box15 >= 4 ? Math.ceil(box15 / 10) * 210 : 0;
-                baseShippingFee = (box6 > 0 ? ship6 : 0) + ship15;
+                // 運費計算：以「箱」為單位計費 ($170 / 箱)
+                const ship6 = (b6_10 + b6_15) * 170;
+                const ship15 = b15 >= 4 ? Math.ceil(b15 / 10) * 210 : 0;
+                baseShippingFee = ship6 + ship15;
 
                 if (address && (address.includes('宜蘭') || address.includes('花蓮') || address.includes('台東') || address.includes('臺東'))) {
-                    const box6Boxes = Math.ceil(box6 / 15);
-                    const box15Boxes = box15 >= 4 ? Math.ceil(box15 / 10) : 0;
-                    eastShippingFee = (box6Boxes + box15Boxes) * 10;
+                    const totalBoxes = b6_10 + b6_15 + (b15 >= 4 ? Math.ceil(b15 / 10) : 0);
+                    eastShippingFee = totalBoxes * 10;
                 }
             }
 
@@ -537,10 +567,13 @@
 
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const box6 = parseInt(document.getElementById('box6').value) || 0;
+            const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
+            const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
             const box15 = parseInt(document.getElementById('box15').value) || 0;
 
-            if (box6 === 0 && box15 === 0) { alert("❌ 請至少選擇一種商品的訂購數量！"); return; }
+            const total6Boxes = (b6_10 * 10) + (b6_15 * 15);
+
+            if (total6Boxes === 0 && box15 === 0) { alert("❌ 請至少選擇一種商品的訂購數量！"); return; }
             if (box15 > 0 && box15 < 4) { alert("❌ 15入規格至少需滿 4 盒以上才出貨唷！"); return; }
 
             const submitBtn = document.getElementById('submitBtn');
@@ -553,7 +586,9 @@
                 receiveName: document.getElementById('receiveName').value,
                 receivePhone: document.getElementById('receivePhone').value,
                 receiveAddress: document.getElementById('receiveAddress').value,
-                box6: box6,
+                box6: total6Boxes, // 傳送計算後的6入總盒數給後台
+                box6_10_cases: b6_10,
+                box6_15_cases: b6_15,
                 box15: box15,
                 shipDate: document.getElementById('shipDate').value,
                 deliveryTimeSlot: document.getElementById('deliveryTimeSlot').value,
