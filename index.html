@@ -68,10 +68,10 @@
                                     <option value="2026/08/19">2026/08/19 (三)</option>
                                     <option value="2026/08/20">2026/08/20 (四)</option>
                                     <option value="2026/08/21">2026/08/21 (五)</option>
-                                    <option value="2026/08/25">2026/08/25 (二) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/26">2026/08/26 (三) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/27">2026/08/27 (四) 【中秋高峰-不開放6入】</option>
-                                    <option value="2026/08/28">2026/08/28 (五) 【中秋高峰-不開放6入】</option>
+                                    <option value="2026/08/25">2026/08/25 (二)</option>
+                                    <option value="2026/08/26">2026/08/26 (三)</option>
+                                    <option value="2026/08/27">2026/08/27 (四)</option>
+                                    <option value="2026/08/28">2026/08/28 (五)</option>
                                     <option value="2026/09/02">2026/09/02 (三) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/03">2026/09/03 (四) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/04">2026/09/04 (五) 【中秋高峰-不開放6入】</option>                                    
@@ -121,7 +121,7 @@
 
                     <!-- 方案選擇區塊 -->
                     <div class="space-y-4">
-                        <label class="block text-sm font-bold text-slate-700">🛒 訂購數量與即時庫存</label>
+                        <label class="block text-sm font-bold text-slate-700">🛒 訂購數量</label>
                         
                         <!-- 6入品項 -->
                         <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
@@ -129,8 +129,7 @@
                             <div class="flex-1 space-y-1">
                                 <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
-                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 當日剩餘總可接單容量：<span id="stock_pieces_lbl">--</span> 顆</p>
-                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 08/25 起之中秋高峰期，此規格不開放宅配。</p>
+                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
                                 <input type="number" id="box6" min="0" step="15" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -144,7 +143,6 @@
                             <div class="flex-1 space-y-1">
                                 <h4 class="font-bold text-slate-800">🧧 15入禮盒 <span class="text-amber-700 ml-1">(NT$ 750 / 盒)</span></h4>
                                 <p class="text-xs text-slate-400">※ 最少需滿 4 盒以上才出貨</p>
-                                <p class="text-xs font-bold text-emerald-700 bg-emerald-50 inline-block px-2 py-0.5 rounded-sm">🔥 換算大盒剩餘約：<span id="stock_box15_lbl">--</span> 盒</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
                                 <input type="number" id="box15" min="0" value="0" oninput="checkStock(); calculateTotal();" onblur="validateBox15Min();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
@@ -263,8 +261,6 @@
         let remainingTotalPieces = 4200; 
 
         window.onload = function() {
-            document.getElementById('stock_pieces_lbl').innerText = "--";
-            document.getElementById('stock_box15_lbl').innerText = "--";
             calculateTotal();
         };
 
@@ -372,8 +368,6 @@
             calculateTotal();
 
             if (!shipDate) {
-                document.getElementById('stock_pieces_lbl').innerText = "--";
-                document.getElementById('stock_box15_lbl').innerText = "--";
                 arrivalNotice.classList.add('hidden');
                 setFormDisabled(false);
                 return;
@@ -400,8 +394,6 @@
 
             if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
                 freeShippingNotice.classList.remove('hidden');
-                document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
-                document.getElementById('stock_box15_lbl').innerText = "免運專屬";
                 setFormDisabled(true, "❌ 請至上方免運網頁訂購");
                 alert("📢 溫馨提醒：您選的日期【享有免運優惠】，請使用上方綠色區塊的連結前往專屬網頁訂購！");
                 return;
@@ -409,9 +401,6 @@
                 freeShippingNotice.classList.add('hidden');
                 setFormDisabled(false);
             }
-
-            document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
-            document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
             fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
             .then(res => res.json())
@@ -441,12 +430,9 @@
 
                 remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
                 
-                document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
-                document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
-
-                // 已經拿掉滿單自動鎖住表單的限制，僅保留中秋高峰不開放6入的邏輯
                 setFormDisabled(false);
-                if (shipDate >= '2026/08/25') {
+                // 09/02 起之中秋高峰期不開放 6 入
+                if (shipDate >= '2026/09/02') {
                     box6Input.disabled = true;
                     box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
                     peakNotice.classList.remove('hidden');
@@ -460,19 +446,15 @@
             })
             .catch(err => {
                 console.error("【庫存 API 連線錯誤】", err);
-                document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
-                document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
             });
         }
 
         function checkStock() {
-            // 保留提示，但不再強制清空或阻擋
             const box6Val = parseInt(document.getElementById('box6').value) || 0;
             const box15Val = parseInt(document.getElementById('box15').value) || 0;
             const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
 
             if (totalSelectedPieces > remainingTotalPieces) {
-                // 這裡僅作溫馨提醒，不強制歸零
                 console.log(`⚠️ 目前選購數量 (${totalSelectedPieces} 顆) 已超過剩餘庫存 (${remainingTotalPieces} 顆)，但已設定不強制阻擋。`);
             }
         }
