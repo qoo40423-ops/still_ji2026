@@ -369,132 +369,125 @@
             }
         }
 
-        function handleDateChange() {
-    const shipDate = document.getElementById('shipDate').value;
-    const box6_10 = document.getElementById('box6_10');
-    const box6_15 = document.getElementById('box6_15');
-    const box15Input = document.getElementById('box15');
-    const peakNotice10 = document.getElementById('peakNotice10');
-    const peakNotice15 = document.getElementById('peakNotice15');
-    const blockBox6_10 = document.getElementById('block_box6_10');
-    const blockBox6_15 = document.getElementById('block_box6_15');
-    const freeShippingNotice = document.getElementById('freeShippingNotice');
-    const arrivalNotice = document.getElementById('estimatedArrivalNotice');
+function handleDateChange() {
+            const shipDate = document.getElementById('shipDate').value;
+            const box6_10 = document.getElementById('box6_10');
+            const box6_15 = document.getElementById('box6_15');
+            const box15Input = document.getElementById('box15');
+            const peakNotice10 = document.getElementById('peakNotice10');
+            const peakNotice15 = document.getElementById('peakNotice15');
+            const blockBox6_10 = document.getElementById('block_box6_10');
+            const blockBox6_15 = document.getElementById('block_box6_15');
+            const freeShippingNotice = document.getElementById('freeShippingNotice');
+            const arrivalNotice = document.getElementById('estimatedArrivalNotice');
 
-    box6_10.value = 0;
-    box6_15.value = 0;
-    box15Input.value = 0;
-    calculateTotal();
+            box6_10.value = 0;
+            box6_15.value = 0;
+            box15Input.value = 0;
+            calculateTotal();
 
-    if (!shipDate) {
-        document.getElementById('stock_pieces_lbl').innerText = "--";
-        document.getElementById('stock_box15_lbl').innerText = "--";
-        arrivalNotice.classList.add('hidden');
-        setFormDisabled(false);
-        return;
-    }
+            if (!shipDate) {
+                document.getElementById('stock_pieces_lbl').innerText = "--";
+                document.getElementById('stock_box15_lbl').innerText = "--";
+                arrivalNotice.classList.add('hidden');
+                setFormDisabled(false);
+                return;
+            }
 
-    // 計算預計到貨日
-    try {
-        const dateObj = new Date(shipDate);
-        if (!isNaN(dateObj.getTime())) {
-            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-            const d1 = new Date(dateObj); d1.setDate(d1.getDate() + 1);
-            const d2 = new Date(dateObj); d2.setDate(d2.getDate() + 2);
+            // 計算預計到貨日
+            try {
+                const dateObj = new Date(shipDate);
+                if (!isNaN(dateObj.getTime())) {
+                    const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                    const d1 = new Date(dateObj); d1.setDate(d1.getDate() + 1);
+                    const d2 = new Date(dateObj); d2.setDate(d2.getDate() + 2);
+                    
+                    const pad = (n) => String(n).padStart(2, '0');
+                    const m1 = pad(d1.getMonth() + 1), dd1 = pad(d1.getDate()), w1 = weekDays[d1.getDay()];
+                    const m2 = pad(d2.getMonth() + 1), dd2 = pad(d2.getDate()), w2 = weekDays[d2.getDay()];
+                    
+                    arrivalNotice.innerHTML = `💡 預計到貨日：${m1}/${dd1} (${w1}) ～ ${m2}/${dd2} (${w2}) 左右抵達`;
+                    arrivalNotice.classList.remove('hidden');
+                }
+            } catch(e) {
+                arrivalNotice.classList.add('hidden');
+            }
+
+            // 免運期間判斷
+            if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
+                freeShippingNotice.classList.remove('hidden');
+                document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
+                document.getElementById('stock_box15_lbl').innerText = "免運專屬";
+                setFormDisabled(true, "❌ 請至上方免運網頁訂購");
+                alert("📢 溫馨提醒：您選的日期【享有免運優惠】，請使用上方綠色區塊的連結前往專屬網頁訂購！");
+                return;
+            } else {
+                freeShippingNotice.classList.add('hidden');
+                setFormDisabled(false);
+            }
+
+            document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
+            document.getElementById('stock_box15_lbl').innerText = "讀取中...";
+
+            // 🌟 使用 JSONP 避開跨域封鎖問題
+            const callbackName = 'gasStockCallback_' + Date.now();
             
-            const pad = (n) => String(n).padStart(2, '0');
-            const m1 = pad(d1.getMonth() + 1), dd1 = pad(d1.getDate()), w1 = weekDays[d1.getDay()];
-            const m2 = pad(d2.getMonth() + 1), dd2 = pad(d2.getDate()), w2 = weekDays[d2.getDay()];
-            
-            arrivalNotice.innerHTML = `💡 預計到貨日：${m1}/${dd1} (${w1}) ～ ${m2}/${dd2} (${w2}) 左右抵達`;
-            arrivalNotice.classList.remove('hidden');
-        }
-    } catch(e) {
-        arrivalNotice.classList.add('hidden');
-    }
+            // 建立動態的回調函式接收資料
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                const scriptEl = document.getElementById(callbackName);
+                if (scriptEl) scriptEl.remove();
 
-    // 免運期間判斷
-    if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
-        freeShippingNotice.classList.remove('hidden');
-        document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
-        document.getElementById('stock_box15_lbl').innerText = "免運專屬";
-        setFormDisabled(true, "❌ 請至上方免運網頁訂購");
-        alert("📢 溫馨提醒：您選的日期【享有免運優惠】，請使用上方綠色區塊的連結前往專屬網頁訂購！");
-        return;
-    } else {
-        freeShippingNotice.classList.add('hidden');
-        setFormDisabled(false);
-    }
+                let pieces = 0;
+                if (data && typeof data.remainingPieces !== 'undefined') {
+                    pieces = parseInt(data.remainingPieces);
+                }
 
-    document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
-    document.getElementById('stock_box15_lbl').innerText = "讀取中...";
+                remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
+                
+                document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
+                document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
 
-    // 🌟 純前端修復：使用原生 fetch 配合 redirect: 'follow' 讀取後台純 JSON 庫存
-    fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`, {
-        method: "GET",
-        redirect: "follow"
-    })
-    .then(res => res.json())
-    .then(data => {
-        let pieces = 0;
-        if (data !== null && data !== undefined) {
-            if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
-            else if (typeof data.remainingTotalPieces !== 'undefined') pieces = parseInt(data.remainingTotalPieces);
-            else if (typeof data.stock !== 'undefined') pieces = parseInt(data.stock);
-            else if (typeof data.pieces !== 'undefined') pieces = parseInt(data.pieces);
-            else if (typeof data.totalPieces !== 'undefined') pieces = parseInt(data.totalPieces);
-            else if (typeof data.box15 !== 'undefined') pieces = parseInt(data.box15) * 15;
-            else if (!isNaN(data)) pieces = parseInt(data);
-            else {
-                // 自動尋找傳回物件中的第一個數字數值
-                const keys = Object.keys(data);
-                for (let key of keys) {
-                    if (!isNaN(data[key]) && typeof data[key] === 'number') {
-                        pieces = data[key];
-                        break;
+                if (remainingTotalPieces <= 0) {
+                    setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
+                } else {
+                    setFormDisabled(false);
+                    if (shipDate >= '2026/09/01') {
+                        [box6_10, box6_15].forEach(el => {
+                            el.value = 0;
+                            el.disabled = true;
+                            el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        });
+                        peakNotice10.classList.remove('hidden');
+                        peakNotice15.classList.remove('hidden');
+                        blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
+                        blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
+                    } else {
+                        [box6_10, box6_15].forEach(el => {
+                            el.disabled = false;
+                            el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                        });
+                        peakNotice10.classList.add('hidden');
+                        peakNotice15.classList.add('hidden');
+                        blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
+                        blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
                     }
                 }
-            }
+            };
+
+            // 動態產生 <script> 標籤發送請求
+            const script = document.createElement('script');
+            script.id = callbackName;
+            script.src = `${GAS_WEB_APP_URL}?date=${encodeURIComponent(shipDate)}&callback=${callbackName}`;
+            script.onerror = function() {
+                delete window[callbackName];
+                script.remove();
+                console.error("【庫存 API 讀取失敗】");
+                document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
+                document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
+            };
+            document.body.appendChild(script);
         }
-
-        remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
-        
-        document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
-        document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
-
-        if (remainingTotalPieces <= 0) {
-            setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
-        } else {
-            setFormDisabled(false);
-            if (shipDate >= '2026/09/01') {
-                [box6_10, box6_15].forEach(el => {
-                    el.value = 0;
-                    el.disabled = true;
-                    el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                });
-                peakNotice10.classList.remove('hidden');
-                peakNotice15.classList.remove('hidden');
-                blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
-                blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
-            } else {
-                [box6_10, box6_15].forEach(el => {
-                    el.disabled = false;
-                    el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                });
-                peakNotice10.classList.add('hidden');
-                peakNotice15.classList.add('hidden');
-                blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
-                blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
-            }
-        }
-    })
-    .catch(err => {
-        console.error("【庫存讀取失敗】", err);
-        document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
-        document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
-    });
-}
-
         function checkStock() {
             const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
             const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
