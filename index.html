@@ -428,9 +428,8 @@
             document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
             document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
-            fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
-            .then(res => res.json())
-            .then(data => {
+            // 🌟 核心修正：使用 JSONP (動態 Script 標籤) 穿透 GAS 跨域連線限制
+            window.handleStockCallback = function(data) {
                 let pieces = 0;
                 if (data !== null && data !== undefined) {
                     if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
@@ -484,12 +483,21 @@
                         blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
                     }
                 }
-            })
-            .catch(err => {
-                console.error("【庫存 API 連線錯誤】", err);
+                
+                // 清理動態產生的 script
+                const oldScript = document.getElementById('jsonp_stock_script');
+                if (oldScript) oldScript.remove();
+            };
+
+            const script = document.createElement('script');
+            script.id = 'jsonp_stock_script';
+            script.src = `${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}&callback=handleStockCallback`;
+            script.onerror = function() {
+                console.error("【庫存 API 連線錯誤】");
                 document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
                 document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
-            });
+            };
+            document.body.appendChild(script);
         }
 
         function checkStock() {
