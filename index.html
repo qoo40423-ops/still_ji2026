@@ -272,7 +272,7 @@
     </div>
 
     <script>
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbIGo8HY8ZyfcwdVhBVPeSiWBbMxLBtGE9vzG-asU6DGiAqZ7XvsF_Nl5eNnhLyEvfdg/exec";
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwcVkPustpC1tRnx7lwieOSmLqDv1yQmHjzq5VjxMbhCdVzhfz8ixlQcKF8khQF9h8lug/exec";
 
         let currentCalculatedTotal = 0;
         let remainingTotalPieces = 4200; 
@@ -394,11 +394,11 @@
                 return;
             }
 
-            // 計算預計到貨日
             try {
                 const dateObj = new Date(shipDate);
                 if (!isNaN(dateObj.getTime())) {
                     const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
                     const d1 = new Date(dateObj); d1.setDate(d1.getDate() + 1);
                     const d2 = new Date(dateObj); d2.setDate(d2.getDate() + 2);
                     
@@ -413,7 +413,6 @@
                 arrivalNotice.classList.add('hidden');
             }
 
-            // 免運期間判斷
             if (shipDate >= '2026/08/03' && shipDate <= '2026/08/17') {
                 freeShippingNotice.classList.remove('hidden');
                 document.getElementById('stock_pieces_lbl').innerText = "免運專屬";
@@ -429,18 +428,30 @@
             document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
             document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
-            // 🌟 使用 JSONP 避開跨域封鎖問題
-            const callbackName = 'gasStockCallback_' + Date.now();
-            
-            // 建立動態的回調函式接收資料
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                const scriptEl = document.getElementById(callbackName);
-                if (scriptEl) scriptEl.remove();
-
+            fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
+            .then(res => res.json())
+            .then(data => {
                 let pieces = 0;
-                if (data && typeof data.remainingPieces !== 'undefined') {
-                    pieces = parseInt(data.remainingPieces);
+                if (data !== null && data !== undefined) {
+                    if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
+                    else if (typeof data.remainingTotalPieces !== 'undefined') pieces = parseInt(data.remainingTotalPieces);
+                    else if (typeof data.stock !== 'undefined') pieces = parseInt(data.stock);
+                    else if (typeof data.pieces !== 'undefined') pieces = parseInt(data.pieces);
+                    else if (typeof data.totalPieces !== 'undefined') pieces = parseInt(data.totalPieces);
+                    else if (typeof data.box15 !== 'undefined') pieces = parseInt(data.box15) * 15;
+                    else if (data.data && typeof data.data.remainingPieces !== 'undefined') pieces = parseInt(data.data.remainingPieces);
+                    else if (data.order && typeof data.order.remainingPieces !== 'undefined') pieces = parseInt(data.order.remainingPieces);
+                    else if (!isNaN(data)) {
+                        pieces = parseInt(data);
+                    } else {
+                        const keys = Object.keys(data);
+                        for (let key of keys) {
+                            if (!isNaN(data[key]) && typeof data[key] === 'number') {
+                                pieces = data[key];
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
@@ -473,20 +484,12 @@
                         blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
                     }
                 }
-            };
-
-            // 動態產生 <script> 標籤發送請求
-            const script = document.createElement('script');
-            script.id = callbackName;
-            script.src = `${GAS_WEB_APP_URL}?date=${encodeURIComponent(shipDate)}&callback=${callbackName}`;
-            script.onerror = function() {
-                delete window[callbackName];
-                script.remove();
-                console.error("【庫存 API 讀取失敗】");
+            })
+            .catch(err => {
+                console.error("【庫存 API 連線錯誤】", err);
                 document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
                 document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
-            };
-            document.body.appendChild(script);
+            });
         }
 
         function checkStock() {
@@ -537,9 +540,9 @@
             let eastShippingFee = 0;
 
             if (!isFreeShipping) {
-                // 運費計算：與後端邏輯對齊
+                // 運費計算：以「箱」為單位計費 ($170 / 箱)
                 const ship6 = (b6_10 + b6_15) * 170;
-                const ship15 = b15 >= 4 ? Math.ceil(b15 / 10) * 210 : 0; // 修正：補上 >= 4 判斷
+                const ship15 = b15 >= 4 ? Math.ceil(b15 / 10) * 210 : 0;
                 baseShippingFee = ship6 + ship15;
 
                 if (address && (address.includes('宜蘭') || address.includes('花蓮') || address.includes('台東') || address.includes('臺東'))) {
@@ -583,7 +586,7 @@
                 receiveName: document.getElementById('receiveName').value,
                 receivePhone: document.getElementById('receivePhone').value,
                 receiveAddress: document.getElementById('receiveAddress').value,
-                box6: total6Boxes,
+                box6: total6Boxes, // 傳送計算後的6入總盒數給後台
                 box6_10_cases: b6_10,
                 box6_15_cases: b6_15,
                 box15: box15,
@@ -622,7 +625,6 @@
             });
         });
 
-        // 🌟 修正：查詢訂單功能改為 JSONP 模式
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('searchEmail').value;
@@ -634,13 +636,9 @@
             resultDiv.classList.remove('hidden');
             resultDiv.innerHTML = "<p class='text-slate-500 animate-pulse'>查詢中，請稍候...</p>";
 
-            const callbackName = 'gasSearchCallback_' + Date.now();
-
-            window[callbackName] = function(data) {
-                delete window[callbackName];
-                const scriptEl = document.getElementById(callbackName);
-                if (scriptEl) scriptEl.remove();
-
+            fetch(`${GAS_WEB_APP_URL}?action=queryOrder&email=${encodeURIComponent(email)}`)
+            .then(res => res.json())
+            .then(data => {
                 searchBtn.disabled = false;
                 searchBtn.innerText = "查詢所有訂單";
                 
@@ -692,19 +690,13 @@
                 } else {
                     resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查無此電子郵件的訂單歷史紀錄，請確認輸入是否有誤。</p>";
                 }
-            };
-
-            const script = document.createElement('script');
-            script.id = callbackName;
-            script.src = `${GAS_WEB_APP_URL}?action=queryOrder&email=${encodeURIComponent(email)}&callback=${callbackName}`;
-            script.onerror = function() {
-                delete window[callbackName];
-                script.remove();
+            })
+            .catch(err => {
+                console.error(err);
                 searchBtn.disabled = false;
                 searchBtn.innerText = "查詢所有訂單";
                 resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查詢連線失敗，請稍後再試或直接聯絡 LINE 客服。</p>";
-            };
-            document.body.appendChild(script);
+            });
         });
 
         function copyAccountText(text) {
