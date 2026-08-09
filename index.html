@@ -428,70 +428,80 @@
             document.getElementById('stock_pieces_lbl').innerText = "讀取中...";
             document.getElementById('stock_box15_lbl').innerText = "讀取中...";
 
-            fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
-            .then(res => res.json())
-            .then(data => {
-                let pieces = 0;
-                if (data !== null && data !== undefined) {
-                    if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
-                    else if (typeof data.remainingTotalPieces !== 'undefined') pieces = parseInt(data.remainingTotalPieces);
-                    else if (typeof data.stock !== 'undefined') pieces = parseInt(data.stock);
-                    else if (typeof data.pieces !== 'undefined') pieces = parseInt(data.pieces);
-                    else if (typeof data.totalPieces !== 'undefined') pieces = parseInt(data.totalPieces);
-                    else if (typeof data.box15 !== 'undefined') pieces = parseInt(data.box15) * 15;
-                    else if (data.data && typeof data.data.remainingPieces !== 'undefined') pieces = parseInt(data.data.remainingPieces);
-                    else if (data.order && typeof data.order.remainingPieces !== 'undefined') pieces = parseInt(data.order.remainingPieces);
-                    else if (!isNaN(data)) {
-                        pieces = parseInt(data);
-                    } else {
-                        const keys = Object.keys(data);
-                        for (let key of keys) {
-                            if (!isNaN(data[key]) && typeof data[key] === 'number') {
-                                pieces = data[key];
-                                break;
-                            }
-                        }
+// 修正後的庫存解析區塊
+fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
+.then(res => res.json())
+.then(data => {
+    let pieces = null;
+
+    if (data !== null && data !== undefined) {
+        // 定義可能包含庫存數值的 Key 名稱
+        const possibleKeys = [
+            'remainingPieces', 'remainingTotalPieces', 'stock', 
+            'pieces', 'totalPieces', '剩餘顆數', '剩餘總顆數'
+        ];
+
+        // 遞迴或遍歷尋找物件中的庫存數值
+        const findValue = (obj) => {
+            if (typeof obj === 'number') return obj;
+            if (typeof obj === 'string') {
+                // 清除逗號、空格等非數字字元後轉換
+                const cleanStr = obj.replace(/,/g, '').trim();
+                if (!isNaN(cleanStr) && cleanStr !== '') return parseInt(cleanStr, 10);
+            }
+            if (typeof obj === 'object' && obj !== null) {
+                for (let key of possibleKeys) {
+                    if (obj[key] !== undefined) {
+                        const val = findValue(obj[key]);
+                        if (val !== null && !isNaN(val)) return val;
                     }
                 }
-
-                remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
-                
-                document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
-                document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
-
-                if (remainingTotalPieces <= 0) {
-                    setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
-                } else {
-                    setFormDisabled(false);
-                    if (shipDate >= '2026/09/01') {
-                        [box6_10, box6_15].forEach(el => {
-                            el.value = 0;
-                            el.disabled = true;
-                            el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        });
-                        peakNotice10.classList.remove('hidden');
-                        peakNotice15.classList.remove('hidden');
-                        blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
-                        blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
-                    } else {
-                        [box6_10, box6_15].forEach(el => {
-                            el.disabled = false;
-                            el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        });
-                        peakNotice10.classList.add('hidden');
-                        peakNotice15.classList.add('hidden');
-                        blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
-                        blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
+                // 若 key 沒對上，遍歷物件內部所有屬性
+                for (let k in obj) {
+                    if (typeof obj[k] === 'number' || typeof obj[k] === 'string') {
+                        const val = findValue(obj[k]);
+                        if (val !== null && !isNaN(val)) return val;
                     }
                 }
-            })
-            .catch(err => {
-                console.error("【庫存 API 連線錯誤】", err);
-                document.getElementById('stock_pieces_lbl').innerText = "讀取失敗";
-                document.getElementById('stock_box15_lbl').innerText = "讀取失敗";
+            }
+            return null;
+        };
+
+        pieces = findValue(data);
+    }
+
+    // 若找到數值則使用，否則歸零
+    remainingTotalPieces = (pieces !== null && !isNaN(pieces)) ? pieces : 0;
+    
+    document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
+    document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
+
+    if (remainingTotalPieces <= 0) {
+        setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
+    } else {
+        setFormDisabled(false);
+        if (shipDate >= '2026/09/01') {
+            [box6_10, box6_15].forEach(el => {
+                el.value = 0;
+                el.disabled = true;
+                el.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
             });
+            peakNotice10.classList.remove('hidden');
+            peakNotice15.classList.remove('hidden');
+            blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
+            blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
+        } else {
+            [box6_10, box6_15].forEach(el => {
+                el.disabled = false;
+                el.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+            });
+            peakNotice10.classList.add('hidden');
+            peakNotice15.classList.add('hidden');
+            blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
+            blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
         }
-
+    }
+})
         function checkStock() {
             const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
             const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
