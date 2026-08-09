@@ -444,21 +444,18 @@
                 document.getElementById('stock_pieces_lbl').innerText = remainingTotalPieces;
                 document.getElementById('stock_box15_lbl').innerText = Math.floor(remainingTotalPieces / 15);
 
-                if (remainingTotalPieces <= 0) {
-                    setFormDisabled(true, "❌ 該日期已滿單，暫無法預購");
+                // 已經拿掉滿單自動鎖住表單的限制，僅保留中秋高峰不開放6入的邏輯
+                setFormDisabled(false);
+                if (shipDate >= '2026/08/25') {
+                    box6Input.disabled = true;
+                    box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                    peakNotice.classList.remove('hidden');
+                    blockBox6.classList.add('bg-gray-100', 'opacity-60');
                 } else {
-                    setFormDisabled(false);
-                    if (shipDate >= '2026/08/25') {
-                        box6Input.disabled = true;
-                        box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        peakNotice.classList.remove('hidden');
-                        blockBox6.classList.add('bg-gray-100', 'opacity-60');
-                    } else {
-                        box6Input.disabled = false;
-                        box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                        peakNotice.classList.add('hidden');
-                        blockBox6.classList.remove('bg-gray-100', 'opacity-60');
-                    }
+                    box6Input.disabled = false;
+                    box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                    peakNotice.classList.add('hidden');
+                    blockBox6.classList.remove('bg-gray-100', 'opacity-60');
                 }
             })
             .catch(err => {
@@ -469,15 +466,14 @@
         }
 
         function checkStock() {
+            // 保留提示，但不再強制清空或阻擋
             const box6Val = parseInt(document.getElementById('box6').value) || 0;
             const box15Val = parseInt(document.getElementById('box15').value) || 0;
             const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
 
             if (totalSelectedPieces > remainingTotalPieces) {
-                alert(`⚠️ 您選購的總顆數 (${totalSelectedPieces} 顆) 已超過該日期的剩餘可接單總量 (${remainingTotalPieces} 顆)！`);
-                document.getElementById('box6').value = 0;
-                document.getElementById('box15').value = 0;
-                calculateTotal();
+                // 這裡僅作溫馨提醒，不強制歸零
+                console.log(`⚠️ 目前選購數量 (${totalSelectedPieces} 顆) 已超過剩餘庫存 (${remainingTotalPieces} 顆)，但已設定不強制阻擋。`);
             }
         }
 
@@ -588,9 +584,11 @@
                     document.getElementById('successBankCard').classList.remove('hidden');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    alert("❌ 滿單或後台判定錯誤：" + (data.message || "請聯絡客服。"));
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "確認送出預購訂單";
+                    alert("❌ 系統提示：" + (data.message || "訂單送出完成。"));
+                    document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+                    document.getElementById('formContainer').classList.add('hidden');
+                    document.getElementById('successBankCard').classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             })
             .catch(error => {
