@@ -16,7 +16,7 @@
             <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統</p>
         </div>
 
-        <!-- 🔄 新增：功能頁籤切換按鈕 (與圖片款式相同) -->
+        <!-- 🔄 功能頁籤切換按鈕 -->
         <div class="grid grid-cols-2 gap-3">
             <button id="tab-order" onclick="switchTab('order')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
                 訂購
@@ -76,7 +76,6 @@
                                     <option value="2026/09/03">2026/09/03 (四) 【中秋高峰-不開放6入】</option>
                                     <option value="2026/09/04">2026/09/04 (五) 【中秋高峰-不開放6入】</option>                                    
                                 </select>
-                                <!-- 預設到貨日自動提示區塊 -->
                                 <p id="estimatedArrivalNotice" class="hidden text-xs text-amber-700 font-bold mt-1.5 bg-amber-50 px-2 py-1 rounded border border-amber-200/60"></p>
                             </div>
                             <div>
@@ -119,21 +118,39 @@
                         </div>
                     </div>
 
-                    <!-- 方案選擇區塊 -->
+                    <!-- 方案選擇區塊 (仿造圖片新排版) -->
                     <div class="space-y-4">
                         <label class="block text-sm font-bold text-slate-700">🛒 訂購數量</label>
                         
-                        <!-- 6入品項 -->
-                        <div id="block_box6" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                        <!-- 6入禮盒 (10盒裝/箱) -->
+                        <div id="block_box6_10" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
                             <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
                             <div class="flex-1 space-y-1">
-                                <h4 class="font-bold text-slate-800">🎁 6入禮盒 <span class="text-amber-700 ml-1">(NT$ 300 / 盒)</span></h4>
-                                <p class="text-xs text-slate-400">※ 需以 15 盒為單位（滿箱）才出貨</p>
-                                <p id="peakNotice" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
+                                <h4 class="font-bold text-slate-800 flex items-center gap-1">
+                                    <span>🎁</span> 6入禮盒 (10盒裝 / 箱) <span class="text-amber-700 ml-1">(NT$ 3,000 / 箱)</span>
+                                </h4>
+                                <p class="text-xs text-slate-400">※ 每箱內含 10 盒，單盒折扣價 $300</p>
+                                <p id="peakNotice10" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
-                                <input type="number" id="box6" min="0" step="15" value="0" onchange="validateBox6Multiplier(); checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                <span class="text-xs font-medium text-slate-500">盒</span>
+                                <input type="number" id="box6_10" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">箱</span>
+                            </div>
+                        </div>
+
+                        <!-- 6入禮盒 (15盒裝/箱) -->
+                        <div id="block_box6_15" class="p-4 border border-slate-200 rounded-xl bg-white space-y-3 md:flex md:space-y-0 md:gap-4 items-center">
+                            <img src="6boxes.jpg" alt="6入禮盒" class="w-full md:w-24 h-24 object-cover rounded-lg border border-slate-100 flex-shrink-0">
+                            <div class="flex-1 space-y-1">
+                                <h4 class="font-bold text-slate-800 flex items-center gap-1">
+                                    <span>🎁</span> 6入禮盒 (15盒裝 / 箱) <span class="text-amber-700 ml-1">(NT$ 4,500 / 箱)</span>
+                                </h4>
+                                <p class="text-xs text-slate-400">※ 每箱內含 15 盒，單盒折扣價 $300</p>
+                                <p id="peakNotice15" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
+                            </div>
+                            <div class="flex items-center space-x-2 justify-end">
+                                <input type="number" id="box6_15" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <span class="text-xs font-medium text-slate-500">箱</span>
                             </div>
                         </div>
 
@@ -177,7 +194,7 @@
                             <div class="flex justify-between"><span>商品小計：</span><span class="font-medium text-slate-800">NT$ <span id="lblProductTotal">0</span></span></div>
                             <div class="flex justify-between"><span>基礎宅配運費：</span><span class="font-medium text-slate-800">NT$ <span id="lblBaseShipping">0</span></span></div>
                             <div id="rowEastAddition" class="hidden flex justify-between text-orange-700 font-medium">
-                                <span>⚠️ 東部外島加成 (宜花東每箱+10)：</span>
+                                <span>⚠️ 東部外島加成 (每箱+10)：</span>
                                 <span>NT$ +<span id="lblEastShipping">0</span></span>
                             </div>
                         </div>
@@ -194,7 +211,7 @@
             </div>
         </div>
 
-        <!-- 🔍 調整：將訂單查詢移出來，並預設隱藏 (hidden) -->
+        <!-- 🔍 訂單查詢區 -->
         <div id="searchContainer" class="hidden bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
             <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
             <p class="text-xs text-slate-500">請輸入您下單時填寫的訂購信箱</p>
@@ -209,7 +226,7 @@
             <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
         </div>
 
-        <!-- 區塊二：真實匯款資訊大卡片 -->
+        <!-- 匯款資訊卡片 -->
         <div id="successBankCard" class="hidden bg-white shadow-md rounded-2xl p-6 border-2 border-emerald-500 space-y-5 text-center transition duration-300">
             <div class="space-y-1">
                 <div class="text-4xl">🎉</div>
@@ -217,7 +234,6 @@
                 <p class="text-xs text-slate-500">系統已同步將資料寫入雲端檔案，請於三日內完成匯款。</p>
             </div>
 
-            <!-- 抽離出來的匯款帳號明細模板 -->
             <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 text-left max-w-md mx-auto space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-200/60 pb-2">
                     <span class="text-sm font-bold text-slate-600">💰 應匯款總金額：</span>
@@ -264,7 +280,6 @@
             calculateTotal();
         };
 
-        // 🔄 新增：切換頁籤的 JavaScript 邏輯
         function switchTab(type) {
             const formContainer = document.getElementById('formContainer');
             const searchContainer = document.getElementById('searchContainer');
@@ -272,7 +287,6 @@
             const tabSearch = document.getElementById('tab-search');
             const successBankCard = document.getElementById('successBankCard');
 
-            // 如果已經成功送出訂單，切換時隱藏成功畫面
             if (!successBankCard.classList.contains('hidden')) {
                 successBankCard.classList.add('hidden');
             }
@@ -281,24 +295,24 @@
                 formContainer.classList.remove('hidden');
                 searchContainer.classList.add('hidden');
                 
-                // 訂購按鈕高亮 (橘色)，查詢按鈕變灰
                 tabOrder.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
                 tabSearch.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
             } else {
                 formContainer.classList.add('hidden');
                 searchContainer.classList.remove('hidden');
                 
-                // 查詢按鈕高亮 (橘色)，訂購按鈕變灰
                 tabOrder.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
                 tabSearch.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
             }
         }
 
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
-            const box6Input = document.getElementById('box6');
+            const box6_10Input = document.getElementById('box6_10');
+            const box6_15Input = document.getElementById('box6_15');
             const box15Input = document.getElementById('box15');
             const submitBtn = document.getElementById('submitBtn');
-            const blockBox6 = document.getElementById('block_box6');
+            const blockBox6_10 = document.getElementById('block_box6_10');
+            const blockBox6_15 = document.getElementById('block_box6_15');
             const blockBox15 = document.getElementById('block_box15');
             
             const sectionBasicInfo = document.getElementById('sectionBasicInfo');
@@ -314,13 +328,13 @@
                 });
                 sectionBasicInfo.classList.add('bg-gray-100', 'opacity-60');
 
-                box6Input.disabled = true;
-                box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                blockBox6.classList.add('bg-gray-100', 'opacity-60');
-
-                box15Input.disabled = true;
-                box15Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                blockBox15.classList.add('bg-gray-100', 'opacity-60');
+                [box6_10Input, box6_15Input, box15Input].forEach(input => {
+                    input.disabled = true;
+                    input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                [blockBox6_10, blockBox6_15, blockBox15].forEach(block => {
+                    block.classList.add('bg-gray-100', 'opacity-60');
+                });
 
                 invoiceInputs.forEach(el => {
                     el.disabled = true;
@@ -338,9 +352,13 @@
                 });
                 sectionBasicInfo.classList.remove('bg-gray-100', 'opacity-60');
 
-                box15Input.disabled = false;
-                box15Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                blockBox15.classList.remove('bg-gray-100', 'opacity-60');
+                [box6_10Input, box6_15Input, box15Input].forEach(input => {
+                    input.disabled = false;
+                    input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                [blockBox6_10, blockBox6_15, blockBox15].forEach(block => {
+                    block.classList.remove('bg-gray-100', 'opacity-60');
+                });
 
                 invoiceInputs.forEach(el => {
                     el.disabled = false;
@@ -356,14 +374,18 @@
 
         function handleDateChange() {
             const shipDate = document.getElementById('shipDate').value;
-            const box6Input = document.getElementById('box6');
+            const box6_10Input = document.getElementById('box6_10');
+            const box6_15Input = document.getElementById('box6_15');
             const box15Input = document.getElementById('box15');
-            const peakNotice = document.getElementById('peakNotice');
-            const blockBox6 = document.getElementById('block_box6');
+            const peakNotice10 = document.getElementById('peakNotice10');
+            const peakNotice15 = document.getElementById('peakNotice15');
+            const blockBox6_10 = document.getElementById('block_box6_10');
+            const blockBox6_15 = document.getElementById('block_box6_15');
             const freeShippingNotice = document.getElementById('freeShippingNotice');
             const arrivalNotice = document.getElementById('estimatedArrivalNotice');
 
-            box6Input.value = 0;
+            box6_10Input.value = 0;
+            box6_15Input.value = 0;
             box15Input.value = 0;
             calculateTotal();
 
@@ -429,19 +451,27 @@
                 }
 
                 remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
-                
                 setFormDisabled(false);
-                // 09/02 起之中秋高峰期不開放 6 入
+
+                // 09/02 起之中秋高峰期不開放 6 入所有規格
                 if (shipDate >= '2026/09/02') {
-                    box6Input.disabled = true;
-                    box6Input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                    peakNotice.classList.remove('hidden');
-                    blockBox6.classList.add('bg-gray-100', 'opacity-60');
+                    [box6_10Input, box6_15Input].forEach(input => {
+                        input.disabled = true;
+                        input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                    });
+                    peakNotice10.classList.remove('hidden');
+                    peakNotice15.classList.remove('hidden');
+                    blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
+                    blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
                 } else {
-                    box6Input.disabled = false;
-                    box6Input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                    peakNotice.classList.add('hidden');
-                    blockBox6.classList.remove('bg-gray-100', 'opacity-60');
+                    [box6_10Input, box6_15Input].forEach(input => {
+                        input.disabled = false;
+                        input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                    });
+                    peakNotice10.classList.add('hidden');
+                    peakNotice15.classList.add('hidden');
+                    blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
+                    blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
                 }
             })
             .catch(err => {
@@ -450,24 +480,14 @@
         }
 
         function checkStock() {
-            const box6Val = parseInt(document.getElementById('box6').value) || 0;
+            const box6_10Val = parseInt(document.getElementById('box6_10').value) || 0;
+            const box6_15Val = parseInt(document.getElementById('box6_15').value) || 0;
             const box15Val = parseInt(document.getElementById('box15').value) || 0;
-            const totalSelectedPieces = (box6Val * 6) + (box15Val * 15);
+            const totalSelectedPieces = (box6_10Val * 60) + (box6_15Val * 90) + (box15Val * 15);
 
             if (totalSelectedPieces > remainingTotalPieces) {
-                console.log(`⚠️ 目前選購數量 (${totalSelectedPieces} 顆) 已超過剩餘庫存 (${remainingTotalPieces} 顆)，但已設定不強制阻擋。`);
+                console.log(`⚠️ 目前選購數量 (${totalSelectedPieces} 顆) 已超過剩餘庫存 (${remainingTotalPieces} 顆)。`);
             }
-        }
-
-        function validateBox6Multiplier() {
-            const box6Input = document.getElementById('box6');
-            let val = parseInt(box6Input.value) || 0;
-            if (val > 0 && val % 15 !== 0) {
-                alert("💡 6入規格需以 15 盒為單位（滿箱）才出貨唷！");
-                box6Input.value = Math.ceil(val / 15) * 15;
-            }
-            checkStock();
-            calculateTotal();
         }
 
         function validateBox15Min() {
@@ -487,26 +507,29 @@
         }
 
         function calculateTotal() {
-            const box6 = parseInt(document.getElementById('box6').value) || 0;
-            const box15 = parseInt(document.getElementById('box15').value) || 0;
+            const box6_10 = parseInt(document.getElementById('box6_10').value) || 0; // 箱數 (每箱10盒)
+            const box6_15 = parseInt(document.getElementById('box6_15').value) || 0; // 箱數 (每箱15盒)
+            const box15 = parseInt(document.getElementById('box15').value) || 0;     // 盒數
             const address = document.getElementById('receiveAddress').value;
             const shipDate = document.getElementById('shipDate').value;
 
-            const productTotal = (box6 * 300) + (box15 * 750);
+            // 6入10盒裝每箱 NT$3,000，6入15盒裝每箱 NT$4,500
+            const productTotal = (box6_10 * 3000) + (box6_15 * 4500) + (box15 * 750);
             const isFreeShipping = (shipDate >= '2026/08/03' && shipDate <= '2026/08/17');
 
             let baseShippingFee = 0;
             let eastShippingFee = 0;
 
             if (!isFreeShipping) {
-                const ship6 = (box6 / 15) * 170;
+                // 運費計算：6入10盒裝每箱運費算同10盒基準，6入15盒裝每箱算15盒基準
+                const ship6_10 = box6_10 * 170; 
+                const ship6_15 = box6_15 * 170;
                 const ship15 = box15 >= 4 ? Math.ceil(box15 / 10) * 210 : 0;
-                baseShippingFee = ship6 + ship15;
+                baseShippingFee = ship6_10 + ship6_15 + ship15;
 
                 if (address && (address.includes('宜蘭') || address.includes('花蓮') || address.includes('台東') || address.includes('臺東'))) {
-                    const box6Boxes = box6 / 15;
-                    const box15Boxes = box15 >= 4 ? Math.ceil(box15 / 10) : 0;
-                    eastShippingFee = (box6Boxes + box15Boxes) * 10;
+                    const totalBoxesCount = box6_10 + box6_15 + (box15 >= 4 ? Math.ceil(box15 / 10) : 0);
+                    eastShippingFee = totalBoxesCount * 10;
                 }
             }
 
@@ -526,15 +549,19 @@
 
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const box6 = parseInt(document.getElementById('box6').value) || 0;
+            const box6_10 = parseInt(document.getElementById('box6_10').value) || 0;
+            const box6_15 = parseInt(document.getElementById('box6_15').value) || 0;
             const box15 = parseInt(document.getElementById('box15').value) || 0;
 
-            if (box6 === 0 && box15 === 0) { alert("❌ 請至少輸入一種商品的訂購數量！"); return; }
+            if (box6_10 === 0 && box6_15 === 0 && box15 === 0) { alert("❌ 請至少輸入一種商品的訂購數量！"); return; }
             if (box15 > 0 && box15 < 4) { alert("❌ 15入規格至少需滿 4 盒以上才出貨唷！"); return; }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.innerText = "⏳ 訂單傳送中，請勿關閉網頁...";
+
+            // 轉換為後端慣用的欄位結構（後端對應 6入總盒數 = (箱數*10) 或 (箱數*15)）
+            const totalBox6Pieces = (box6_10 * 10) + (box6_15 * 15);
 
             const formData = {
                 action: "submitOrder",
@@ -542,7 +569,7 @@
                 receiveName: document.getElementById('receiveName').value,
                 receivePhone: document.getElementById('receivePhone').value,
                 receiveAddress: document.getElementById('receiveAddress').value,
-                box6: box6,
+                box6: totalBox6Pieces,
                 box15: box15,
                 shipDate: document.getElementById('shipDate').value,
                 deliveryTimeSlot: document.getElementById('deliveryTimeSlot').value,
@@ -609,7 +636,7 @@
                                     <span class="text-slate-400">下單時間：${ord.timestamp}</span>
                                 </div>
                                 <div><strong>希望出貨日：</strong> ${ord.shipDate}</div>
-                                <div><strong>訂購品項：</strong> 6入: ${ord.box6} 盒 / 15入: ${ord.box15} 盒</div>
+                                <div><strong>訂購品項：</strong> 6入總盒數: ${ord.box6} 盒 / 15入: ${ord.box15} 盒</div>
                                 <div><strong>收件人姓名：</strong> ${ord.receiveName}</div>
                                 <div><strong>配送地址：</strong> ${ord.receiveAddress}</div>
                             </div>
@@ -659,10 +686,6 @@
             navigator.clipboard.writeText(text).then(() => { 
                 alert(`📋 彰化五信帳號 (${text}) 已複製！`); 
             });
-        }
-
-        function copyBankAccount() {
-            copyAccountText("00022111088890");
         }
         
         function resetAndWriteAnotherOrder() {
