@@ -16,16 +16,6 @@
             <p class="text-sm text-slate-500 font-medium">中秋宅配預購系統</p>
         </div>
 
-        <!-- 🔄 功能頁籤切換按鈕 -->
-        <div class="grid grid-cols-2 gap-3">
-            <button id="tab-order" onclick="switchTab('order')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
-                訂購
-            </button>
-            <button id="tab-search" onclick="switchTab('search')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer">
-                查詢/取消
-            </button>
-        </div>
-
         <!-- 區塊一：填寫訂單區 -->
         <div id="formContainer" class="space-y-6">
             
@@ -35,6 +25,15 @@
                 <p>本系統僅提供「宅配服務」。若您需要到店自取，請勿在此填寫，請點擊下方連結前往專屬網頁訂購：</p>
                 <a href="https://line.me/ti/p/~@833smajx" target="_blank" class="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-xs shadow-sm mt-1 cursor-pointer">
                     👉 點此前往【自取專用訂購網頁】
+                </a>
+            </div>
+
+            <!-- 💬 訂單查詢引導方框 (已移至自取公告下方) -->
+            <div class="bg-amber-100 border-l-4 border-amber-600 rounded-r-2xl p-4 shadow-sm text-sm text-amber-950 space-y-2">
+                <p class="font-bold flex items-center gap-1.5 text-base">🔍 如何查詢訂單？</p>
+                <p>若要查詢訂單進度，請點擊下方連結加入官方帳號，並提供您的<strong>訂購人姓名</strong>，我們會盡快為您服務：</p>
+                <a href="https://lin.ee/XouvMRx" target="_blank" class="inline-block bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-xs shadow-sm mt-1 cursor-pointer">
+                    👉 點此前往 LINE 查詢訂單
                 </a>
             </div>
 
@@ -118,7 +117,7 @@
                         </div>
                     </div>
 
-                    <!-- 方案選擇區塊 (仿造圖片新排版) -->
+                    <!-- 方案選擇區塊 -->
                     <div class="space-y-4">
                         <label class="block text-sm font-bold text-slate-700">🛒 訂購數量</label>
                         
@@ -133,7 +132,7 @@
                                 <p id="peakNotice10" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
-                                <input type="number" id="box6_10" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <input type="number" id="box6_10" min="0" value="0" oninput="calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <span class="text-xs font-medium text-slate-500">箱</span>
                             </div>
                         </div>
@@ -149,7 +148,7 @@
                                 <p id="peakNotice15" class="hidden text-xs text-red-600 font-bold mt-1">⚠️ 自 09/02 起之中秋高峰期，此規格不開放宅配。</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
-                                <input type="number" id="box6_15" min="0" value="0" oninput="checkStock(); calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <input type="number" id="box6_15" min="0" value="0" oninput="calculateTotal();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <span class="text-xs font-medium text-slate-500">箱</span>
                             </div>
                         </div>
@@ -162,7 +161,7 @@
                                 <p class="text-xs text-slate-400">※ 最少需滿 4 盒以上才出貨</p>
                             </div>
                             <div class="flex items-center space-x-2 justify-end">
-                                <input type="number" id="box15" min="0" value="0" oninput="checkStock(); calculateTotal();" onblur="validateBox15Min();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <input type="number" id="box15" min="0" value="0" oninput="calculateTotal();" onblur="validateBox15Min();" class="w-20 px-2 py-1 text-center border border-slate-300 rounded-lg font-bold text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <span class="text-xs font-medium text-slate-500">盒</span>
                             </div>
                         </div>
@@ -209,21 +208,6 @@
                     </button>
                 </form>
             </div>
-        </div>
-
-        <!-- 🔍 訂單查詢區 -->
-        <div id="searchContainer" class="hidden bg-white shadow-sm rounded-2xl p-6 border border-slate-100 space-y-4">
-            <h3 class="text-lg font-bold text-slate-700 pb-2 border-b border-slate-100 flex items-center gap-1.5">🔍 訂單查詢與客服協助</h3>
-            <p class="text-xs text-slate-500">請輸入您下單時填寫的訂購信箱</p>
-            <form id="searchForm" class="space-y-3">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" id="searchEmail" required placeholder="請輸入電子郵件" class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                    <button type="submit" id="searchBtn" class="bg-slate-700 hover:bg-slate-800 text-white text-sm font-bold py-2 px-5 rounded-lg transition duration-150 cursor-pointer">
-                        查詢所有訂單
-                    </button>
-                </div>
-            </form>
-            <div id="searchResult" class="hidden mt-3 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
         </div>
 
         <!-- 匯款資訊卡片 -->
@@ -274,37 +258,10 @@
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOsg57EQWq3QRuvAT6WQIPukLAVxbs0wLBW2l2Cknr0q056CqT5_qW3cSaFi6soCH7hQ/exec";
 
         let currentCalculatedTotal = 0;
-        let remainingTotalPieces = 4200; 
 
         window.onload = function() {
             calculateTotal();
         };
-
-        function switchTab(type) {
-            const formContainer = document.getElementById('formContainer');
-            const searchContainer = document.getElementById('searchContainer');
-            const tabOrder = document.getElementById('tab-order');
-            const tabSearch = document.getElementById('tab-search');
-            const successBankCard = document.getElementById('successBankCard');
-
-            if (!successBankCard.classList.contains('hidden')) {
-                successBankCard.classList.add('hidden');
-            }
-
-            if (type === 'order') {
-                formContainer.classList.remove('hidden');
-                searchContainer.classList.add('hidden');
-                
-                tabOrder.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
-                tabSearch.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
-            } else {
-                formContainer.classList.add('hidden');
-                searchContainer.classList.remove('hidden');
-                
-                tabOrder.className = "w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
-                tabSearch.className = "w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-4 rounded-xl transition duration-150 shadow-sm text-center cursor-pointer";
-            }
-        }
 
         function setFormDisabled(isDisabled, message = "確認送出預購訂單") {
             const box6_10Input = document.getElementById('box6_10');
@@ -424,69 +381,25 @@
                 setFormDisabled(false);
             }
 
-            fetch(`${GAS_WEB_APP_URL}?action=getStock&date=${encodeURIComponent(shipDate)}`)
-            .then(res => res.json())
-            .then(data => {
-                let pieces = 0;
-                if (data !== null && data !== undefined) {
-                    if (typeof data.remainingPieces !== 'undefined') pieces = parseInt(data.remainingPieces);
-                    else if (typeof data.remainingTotalPieces !== 'undefined') pieces = parseInt(data.remainingTotalPieces);
-                    else if (typeof data.stock !== 'undefined') pieces = parseInt(data.stock);
-                    else if (typeof data.pieces !== 'undefined') pieces = parseInt(data.pieces);
-                    else if (typeof data.totalPieces !== 'undefined') pieces = parseInt(data.totalPieces);
-                    else if (typeof data.box15 !== 'undefined') pieces = parseInt(data.box15) * 15;
-                    else if (data.data && typeof data.data.remainingPieces !== 'undefined') pieces = parseInt(data.data.remainingPieces);
-                    else if (data.order && typeof data.order.remainingPieces !== 'undefined') pieces = parseInt(data.order.remainingPieces);
-                    else if (!isNaN(data)) {
-                        pieces = parseInt(data);
-                    } else {
-                        const keys = Object.keys(data);
-                        for (let key of keys) {
-                            if (!isNaN(data[key]) && typeof data[key] === 'number') {
-                                pieces = data[key];
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                remainingTotalPieces = isNaN(pieces) ? 0 : pieces;
-                setFormDisabled(false);
-
-                // 09/02 起之中秋高峰期不開放 6 入所有規格
-                if (shipDate >= '2026/09/02') {
-                    [box6_10Input, box6_15Input].forEach(input => {
-                        input.disabled = true;
-                        input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                    });
-                    peakNotice10.classList.remove('hidden');
-                    peakNotice15.classList.remove('hidden');
-                    blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
-                    blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
-                } else {
-                    [box6_10Input, box6_15Input].forEach(input => {
-                        input.disabled = false;
-                        input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
-                    });
-                    peakNotice10.classList.add('hidden');
-                    peakNotice15.classList.add('hidden');
-                    blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
-                    blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
-                }
-            })
-            .catch(err => {
-                console.error("【庫存 API 連線錯誤】", err);
-            });
-        }
-
-        function checkStock() {
-            const box6_10Val = parseInt(document.getElementById('box6_10').value) || 0;
-            const box6_15Val = parseInt(document.getElementById('box6_15').value) || 0;
-            const box15Val = parseInt(document.getElementById('box15').value) || 0;
-            const totalSelectedPieces = (box6_10Val * 60) + (box6_15Val * 90) + (box15Val * 15);
-
-            if (totalSelectedPieces > remainingTotalPieces) {
-                console.log(`⚠️ 目前選購數量 (${totalSelectedPieces} 顆) 已超過剩餘庫存 (${remainingTotalPieces} 顆)。`);
+            // 09/02 起之中秋高峰期不開放 6 入所有規格
+            if (shipDate >= '2026/09/02') {
+                [box6_10Input, box6_15Input].forEach(input => {
+                    input.disabled = true;
+                    input.classList.add('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                peakNotice10.classList.remove('hidden');
+                peakNotice15.classList.remove('hidden');
+                blockBox6_10.classList.add('bg-gray-100', 'opacity-60');
+                blockBox6_15.classList.add('bg-gray-100', 'opacity-60');
+            } else {
+                [box6_10Input, box6_15Input].forEach(input => {
+                    input.disabled = false;
+                    input.classList.remove('bg-slate-100', 'text-slate-400', 'cursor-not-allowed');
+                });
+                peakNotice10.classList.add('hidden');
+                peakNotice15.classList.add('hidden');
+                blockBox6_10.classList.remove('bg-gray-100', 'opacity-60');
+                blockBox6_15.classList.remove('bg-gray-100', 'opacity-60');
             }
         }
 
@@ -507,13 +420,12 @@
         }
 
         function calculateTotal() {
-            const box6_10 = parseInt(document.getElementById('box6_10').value) || 0; // 箱數 (每箱10盒)
-            const box6_15 = parseInt(document.getElementById('box6_15').value) || 0; // 箱數 (每箱15盒)
-            const box15 = parseInt(document.getElementById('box15').value) || 0;     // 盒數
+            const box6_10 = parseInt(document.getElementById('box6_10').value) || 0; 
+            const box6_15 = parseInt(document.getElementById('box6_15').value) || 0; 
+            const box15 = parseInt(document.getElementById('box15').value) || 0;     
             const address = document.getElementById('receiveAddress').value;
             const shipDate = document.getElementById('shipDate').value;
 
-            // 6入10盒裝每箱 NT$3,000，6入15盒裝每箱 NT$4,500
             const productTotal = (box6_10 * 3000) + (box6_15 * 4500) + (box15 * 750);
             const isFreeShipping = (shipDate >= '2026/08/03' && shipDate <= '2026/08/17');
 
@@ -521,7 +433,6 @@
             let eastShippingFee = 0;
 
             if (!isFreeShipping) {
-                // 運費計算：6入10盒裝每箱運費算同10盒基準，6入15盒裝每箱算15盒基準
                 const ship6_10 = box6_10 * 170; 
                 const ship6_15 = box6_15 * 170;
                 const ship15 = box15 >= 4 ? Math.ceil(box15 / 10) * 210 : 0;
@@ -560,7 +471,6 @@
             submitBtn.disabled = true;
             submitBtn.innerText = "⏳ 訂單傳送中，請勿關閉網頁...";
 
-            // 轉換為後端慣用的欄位結構（後端對應 6入總盒數 = (箱數*10) 或 (箱數*15)）
             const totalBox6Pieces = (box6_10 * 10) + (box6_15 * 15);
 
             const formData = {
@@ -587,98 +497,17 @@
             })
             .then(response => response.json())
             .then(data => {
-                if(data.status === "success") {
-                    document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
-                    document.getElementById('formContainer').classList.add('hidden');
-                    document.getElementById('successBankCard').classList.remove('hidden');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    alert("❌ 系統提示：" + (data.message || "訂單送出完成。"));
-                    document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
-                    document.getElementById('formContainer').classList.add('hidden');
-                    document.getElementById('successBankCard').classList.remove('hidden');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
+                document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+                document.getElementById('formContainer').classList.add('hidden');
+                document.getElementById('successBankCard').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             })
             .catch(error => {
                 console.error("Error:", error);
-                alert("❌ 連線失敗，請確認後台試算表或重新整理再試一次。");
-                submitBtn.disabled = false;
-                submitBtn.innerText = "確認送出預購訂單";
-            });
-        });
-
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('searchEmail').value;
-            const searchBtn = document.getElementById('searchBtn');
-            const resultDiv = document.getElementById('searchResult');
-
-            searchBtn.disabled = true;
-            searchBtn.innerText = "🔍 查詢中...";
-            resultDiv.classList.remove('hidden');
-            resultDiv.innerHTML = "<p class='text-slate-500 animate-pulse'>查詢中，請稍候...</p>";
-
-            fetch(`${GAS_WEB_APP_URL}?action=queryOrder&email=${encodeURIComponent(email)}`)
-            .then(res => res.json())
-            .then(data => {
-                searchBtn.disabled = false;
-                searchBtn.innerText = "查詢所有訂單";
-                
-                if(data.status === "success" && data.orders && data.orders.length > 0) {
-                    let ordersHtml = `<div class="space-y-4"><p class="text-emerald-700 font-bold">✨ 共找到 ${data.orders.length} 筆以此信箱訂購的紀錄：</p>`;
-                    
-                    data.orders.forEach((ord, index) => {
-                        ordersHtml += `
-                            <div class="p-3 bg-white border border-slate-200 rounded-lg space-y-1 text-xs text-slate-700 shadow-xs">
-                                <div class="font-bold text-amber-800 border-b border-slate-100 pb-1 flex justify-between">
-                                    <span># 訂單 ${index + 1} (${ord.sheetName})</span>
-                                    <span class="text-slate-400">下單時間：${ord.timestamp}</span>
-                                </div>
-                                <div><strong>希望出貨日：</strong> ${ord.shipDate}</div>
-                                <div><strong>訂購品項：</strong> 6入總盒數: ${ord.box6} 盒 / 15入: ${ord.box15} 盒</div>
-                                <div><strong>收件人姓名：</strong> ${ord.receiveName}</div>
-                                <div><strong>配送地址：</strong> ${ord.receiveAddress}</div>
-                            </div>
-                        `;
-                    });
-
-                    ordersHtml += `
-                        <div class="bg-white border border-slate-200 rounded-xl p-4 text-left space-y-3 mt-4 shadow-xs">
-                            <h4 class="font-bold text-slate-700 text-sm border-b border-slate-100 pb-1.5 flex items-center gap-1">🏦 轉帳匯款帳號資訊</h4>
-                            <div class="text-xs space-y-2 text-slate-700">
-                                <div><strong>🏦 銀行名稱：</strong> 彰化五信 (總行代號：161)</div>
-                                <div><strong>🏪 分行名稱：</strong> 華山分社</div>
-                                <div class="flex justify-between items-center bg-slate-50 p-2 border border-slate-200 rounded-lg">
-                                    <div><strong>🔢 匯款帳號：</strong> <span class="font-mono font-bold text-slate-900 select-all">00022111088890</span></div>
-                                    <button onclick="copyAccountText('00022111088890')" class="text-[10px] font-bold bg-white hover:bg-slate-100 px-2 py-1 rounded border border-slate-200 transition duration-100 cursor-pointer">📋 複製</button>
-                                </div>
-                                <div><strong>👤 戶名：</strong> 紀家烘焙坊-吳亭緯</div>
-                            </div>
-                            <div class="text-[11px] text-amber-800 bg-amber-50 border border-amber-200/60 rounded-lg p-3 space-y-1.5">
-                                <p class="font-bold text-amber-900">📢 匯款完成請您通知，並提供帳戶後5碼</p>
-                                <p>轉帳成功後，請前往我們的 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-700 font-bold underline">官方 LINE 客服</a> 告知，並提供帳戶後 5 碼以利對帳。</p>
-                            </div>
-                        </div>
-                    `;
-
-                    ordersHtml += `
-                        <div class="p-3 bg-amber-50/50 border border-amber-200/50 rounded-lg text-xs text-amber-900 space-y-1">
-                            <p class="font-bold">⚠️ 注意事項：</p>
-                            <p>系統不提供自行取消或修改功能。如需更改訂單內容或辦理取消，請直接私訊 <a href="https://lin.ee/XouvMRx" target="_blank" class="text-emerald-700 font-bold underline">官方 LINE 客服</a> 協助處理！</p>
-                        </div>
-                    </div>`;
-
-                    resultDiv.innerHTML = ordersHtml;
-                } else {
-                    resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查無此電子郵件的訂單歷史紀錄，請確認輸入是否有誤。</p>";
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                searchBtn.disabled = false;
-                searchBtn.innerText = "查詢所有訂單";
-                resultDiv.innerHTML = "<p class='text-red-600 font-medium'>❌ 查詢連線失敗，請稍後再試或直接聯絡 LINE 客服。</p>";
+                document.getElementById('cardFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+                document.getElementById('formContainer').classList.add('hidden');
+                document.getElementById('successBankCard').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
 
