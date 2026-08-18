@@ -46,9 +46,9 @@
                         <h3 class="text-xs font-bold text-slate-400 tracking-wider">📅 配送時間設定</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-slate-600 mb-1">希望出貨日(不是配達日期，是出貨日期哦) *</label>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">希望出貨日(若選項中沒有該日期，代表日期已滿單) *</label>
                                 <select id="shipDate" required onchange="handleDateChange()" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-                                    <option value="">-- 請選擇出貨日 --</option>
+                                    <option value="">-- 請選擇您要出貨的日期 (非配達日) --</option>
                                     <option value="2026/08/26">2026/08/26 (三)</option>
                                     <option value="2026/08/27">2026/08/27 (四)</option>
                                     <option value="2026/08/28">2026/08/28 (五)</option>                              
@@ -248,6 +248,38 @@
 
     </div>
 
+    <!-- 💡 二次確認彈跳視窗 (Modal) -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in duration-200">
+            <div class="text-center space-y-1">
+                <div class="text-3xl">⚠️</div>
+                <h3 class="text-lg font-black text-slate-800">請二次確認您的預購內容</h3>
+                <p class="text-xs text-slate-500">送出前請仔細核對以下出貨日與訂購數量：</p>
+            </div>
+            
+            <div class="bg-amber-50/60 border border-amber-200 rounded-xl p-4 text-sm space-y-2 text-slate-700">
+                <div><strong>📅 希望出貨日：</strong> <span id="modalShipDate" class="text-amber-800 font-bold"></span></div>
+                <div class="border-t border-amber-200/60 pt-2">
+                    <strong>🛒 訂購數量清單：</strong>
+                    <ul id="modalSummaryList" class="mt-1 space-y-1 text-xs text-slate-600 pl-4 list-disc"></ul>
+                </div>
+                <div class="border-t border-amber-200/60 pt-2 flex justify-between font-bold text-amber-900">
+                    <span>總金額：</span>
+                    <span>NT$ <span id="modalFinalTotal">0</span></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button type="button" onclick="closeConfirmModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 px-4 rounded-xl transition duration-150 cursor-pointer text-sm">
+                    返回修改
+                </button>
+                <button type="button" onclick="executeSubmitOrder()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 px-4 rounded-xl transition duration-150 cursor-pointer text-sm shadow-sm">
+                    確認無誤，送出訂單
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzOsg57EQWq3QRuvAT6WQIPukLAVxbs0wLBW2l2Cknr0q056CqT5_qW3cSaFi6soCH7hQ/exec";
 
@@ -320,15 +352,19 @@
                 setFormDisabled(true, "❌ 請至上方免運網頁訂購");
                 alert("📢 溫馨提醒：您選的日期【享有免運優惠】，請使用上方綠色區塊的連結前往專屬網頁訂購！");
             } else {
-                freeShippingNotice.classList.add('hidden');
+                if (freeShippingNotice) freeShippingNotice.classList.add('hidden');
                 setFormDisabled(false);
 
                 // 高峰期限制
                 const isPeak = shipDate >= '2026/09/02';
                 ['box6_4', 'box6_10', 'box6_15'].forEach(id => {
-                    document.getElementById(id).disabled = isPeak;
+                    const el = document.getElementById(id);
+                    if(el) el.disabled = isPeak;
                 });
-                peakNotices.forEach(id => document.getElementById(id).classList.toggle('hidden', !isPeak));
+                peakNotices.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.classList.toggle('hidden', !isPeak);
+                });
                 document.querySelectorAll('[id^="block_box6"]').forEach(b => b.classList.toggle('bg-gray-100', isPeak));
             }
         }
@@ -381,6 +417,7 @@
             document.getElementById('lblFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
         }
 
+        // 攔截表單送出，先顯示二次確認 Modal
         document.getElementById('orderForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const b6_4 = parseInt(document.getElementById('box6_4').value) || 0;
@@ -389,6 +426,34 @@
             const b15 = parseInt(document.getElementById('box15').value) || 0;
 
             if (b6_4 + b6_10 + b6_15 + b15 === 0) { alert("❌ 請至少輸入一種商品的訂購數量！"); return; }
+
+            // 填入 Modal 資訊
+            document.getElementById('modalShipDate').innerText = document.getElementById('shipDate').value;
+            document.getElementById('modalFinalTotal').innerText = currentCalculatedTotal.toLocaleString();
+            
+            const listEl = document.getElementById('modalSummaryList');
+            listEl.innerHTML = '';
+            if (b6_4 > 0) listEl.innerHTML += `<li>6入禮盒 (4盒裝/箱): ${b6_4} 箱</li>`;
+            if (b6_10 > 0) listEl.innerHTML += `<li>6入禮盒 (10盒裝/箱): ${b6_10} 箱</li>`;
+            if (b6_15 > 0) listEl.innerHTML += `<li>6入禮盒 (15盒裝/箱): ${b6_15} 箱</li>`;
+            if (b15 > 0) listEl.innerHTML += `<li>15入禮盒: ${b15} 盒</li>`;
+
+            // 顯示 Modal
+            document.getElementById('confirmModal').classList.remove('hidden');
+        });
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        // 點擊 Modal 中的確認送出後才真正呼叫 GAS
+        function executeSubmitOrder() {
+            closeConfirmModal();
+
+            const b6_4 = parseInt(document.getElementById('box6_4').value) || 0;
+            const b6_10 = parseInt(document.getElementById('box6_10').value) || 0;
+            const b6_15 = parseInt(document.getElementById('box6_15').value) || 0;
+            const b15 = parseInt(document.getElementById('box15').value) || 0;
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
@@ -421,8 +486,13 @@
                 document.getElementById('formContainer').classList.add('hidden');
                 document.getElementById('successBankCard').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
+            })
+            .catch(() => {
+                alert("❌ 訂單送遞發生錯誤，請稍後再試或聯繫客服。");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "確認送出預購訂單";
             });
-        });
+        }
 
         function copyAccountText(text) {
             navigator.clipboard.writeText(text).then(() => alert(`📋 彰化五信帳號 (${text}) 已複製！`));
