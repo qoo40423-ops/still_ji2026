@@ -38,7 +38,10 @@
             </div>
 
             <div class="bg-white shadow-sm rounded-2xl p-6 border border-slate-100">
-                <h2 class="text-xl font-bold text-slate-700 mb-4 pb-2 border-b border-slate-100">✨ 新增宅配訂單</h2>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pb-2 border-b border-slate-100 gap-2">
+                    <h2 class="text-xl font-bold text-slate-700">✨ 新增宅配訂單</h2>
+                    <span class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-1 rounded-lg">感謝支持，9月份宅配名額皆已額滿！</span>
+                </div>
                 
                 <form id="orderForm" class="space-y-5">
                     <!-- 出貨配送日期與指定時間 / 若無該日期代表已額滿無接單 -->
@@ -469,7 +472,7 @@
                 box15: b15,
                 shipDate: document.getElementById('shipDate').value,
                 deliveryTimeSlot: document.getElementById('deliveryTimeSlot').value,
-                orderName: document.getElementById('orderName').value,
+                orderName: document.getElementById('orderName',).value,
                 invoiceType: document.getElementById('invoiceType').value,
                 invoiceTaxId: document.getElementById('invoiceTaxId').value,
                 comment: document.getElementById('comment').value
